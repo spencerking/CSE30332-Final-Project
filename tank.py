@@ -8,7 +8,8 @@ class Tank(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 
 		#pass the tank type to determine which image to use
-		self.image
+		self.tank_image = pygame.image.load('tank/tank0.bmp')
+		self.turret_image = pygame.image.load('tank/turret0.bmp')
 
 		#look into masking instead
 		self.rect = self.image.get_rect()
