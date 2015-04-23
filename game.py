@@ -27,7 +27,7 @@ class GameSpace:
             self.screen.fill(1, 1, 1)
             for s in self.sprites:
                 s.tick()
+                # World.tick() blits its tiles
                 self.screen.blit(s.image, s.rect)
 
             pygame.display.flip()
-
