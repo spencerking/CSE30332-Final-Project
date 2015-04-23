@@ -3,6 +3,7 @@
 import pygame
 from pygame.locals import *
 from world import World
+from world import Tile
 from tank import Tank
 
 class GameSpace:
@@ -15,7 +16,7 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
-        self.world = 
+        self.world = World(self)
 
         while 1:
             self.clock.tick(60)
@@ -23,9 +24,10 @@ class GameSpace:
             # Handle user input
             for event in pygame.event.get():
 
-
+            self.screen.fill(1, 1, 1)
             for s in self.sprites:
                 s.tick()
-                self.screen.blit(self.s.image, self.s.rect)
+                self.screen.blit(s.image, s.rect)
 
             pygame.display.flip()
+
