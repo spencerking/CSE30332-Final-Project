@@ -1,4 +1,4 @@
-from GameSpace import GameSpace
+from game import GameSpace
 
 if __name__ == '__main__':
 	gs = GameSpace()
