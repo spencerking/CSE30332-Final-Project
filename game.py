@@ -1,8 +1,9 @@
-# David Wu, 4/23/15, CSE 30332
+# David Wu, Spencer King, 4/23/15, CSE 30332
 
 import pygame
 from pygame.locals import *
 from world import World
+from tank import Tank
 
 class GameSpace:
     def main(self):
@@ -25,3 +26,6 @@ class GameSpace:
 
             for s in self.sprites:
                 s.tick()
+                self.screen.blit(self.s.image, self.s.rect)
+
+            pygame.display.flip()
