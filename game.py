@@ -18,8 +18,8 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
-        self.tank = Tank()
-        self.sprites.append(tank)
+        self.tank = Tank(1)
+        self.sprites.append(self.tank)
         self.world = World(10, 10, self)
         self.player = Tank(1, self)
 

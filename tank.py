@@ -1,6 +1,7 @@
 # Spencer King, David Wu, 4/23/15, CSE 30332
 
 import pygame
+import math
 from pygame.locals import *
 
 class Tank(pygame.sprite.Sprite):
@@ -51,7 +52,7 @@ SW									NE
 		self.orig_turret = self.turret_image
 
 		#look into masking instead
-		self.rect = self.image.get_rect()
+		self.rect = self.tank_image.get_rect()
 
 		self.fire_sound = pygame.mixer.Sound("audio/tank_fire.wav")
 		self.move_sound = pygame.mixer.Sound("tank_move.wav")
@@ -64,7 +65,7 @@ SW									NE
 		rot_angle = 360 - math.atan2(my-self.py, mx-self.px)*180/math.pi
 		fire_angle = math.atan2(my-self.py, mx-self.px)
 		rot_img = pygame.transform.rotate(self.orig_turret, rot_angle)
-		self.turret_image = self.rot_img
+		self.turret_image = rot_img
 		self.f_angle = fire_angle
 
 	def move(self, orientation):
