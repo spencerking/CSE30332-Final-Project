@@ -9,6 +9,7 @@ from tank import Tank
 class GameSpace:
     def main(self):
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_caption('Tanks')
         pygame.key.set_repeat(1, 50)
         self.size = self.width, self.height = 1200, 800
@@ -17,6 +18,8 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
+        self.tank = Tank()
+        self.sprites.append(tank)
         self.world = World(10, 10, self)
         self.player = Tank(1, self)
 
@@ -27,6 +30,12 @@ class GameSpace:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
+                if event.type == KEYDOWN:
+                    self.tank.key_handler(event.key)
+                if event.type == MOUSEBUTTONDOWN:
+                    bullet = self.tank.Bullet(self.tank.f_angle, self.tank.px, self.tank.py)
+                    self.sprites.append(bullet)
+                    self.tank.fire_sound.play()
 
             self.screen.fill(self.black)
 

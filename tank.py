@@ -53,7 +53,7 @@ SW									NE
 		#look into masking instead
 		self.rect = self.image.get_rect()
 
-		self.fire_sound = pygame.mixer.Sound("tank_fire.wav")
+		self.fire_sound = pygame.mixer.Sound("audio/tank_fire.wav")
 		self.move_sound = pygame.mixer.Sound("tank_move.wav")
 
 	def tick(self):
