@@ -18,7 +18,6 @@ class World:
             self.map.append([])
             for j in range(0, self.width):
                 imageid = randint(0, 2)
-                #pos = (self.tile_height*i, self.tile_width*j)
                 pos = iso_from_cartesian(self.tile_height/2*(i+5), self.tile_width*(j-5))
                 self.map[i].append(Tile(imageid, pos, self))
 
