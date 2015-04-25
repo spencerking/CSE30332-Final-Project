@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import *
 
 class Tank(pygame.sprite.Sprite):
-	def __init__(self, gs=None):
+	def __init__(self, type, gs=None):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.dir_str = None
@@ -19,7 +19,7 @@ class Tank(pygame.sprite.Sprite):
 
 		self.direction = 0
 		self.tank_image = pygame.image.load('tank/' + self.dir_str + '/tank%d.bmp' % self.direction)
-		self.turret_image = pygame.image.load('tank/' + self.dir_str + '/tank%d.bmp' % self.direction)
+		self.turret_image = pygame.image.load('tank/' + self.dir_str + '/turret%d.bmp' % self.direction)
 
 		#look into masking instead
 		self.rect = self.image.get_rect()
