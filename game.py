@@ -5,6 +5,7 @@ import pygame
 from pygame.locals import *
 from world import World
 from tank import Tank
+from tank import Bullet
 
 class GameSpace:
     def main(self):
@@ -18,7 +19,7 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
-        self.tank = Tank('green', self)
+        self.tank = Tank('green', (0,0), self)
         self.sprites.append(self.tank)
         self.world = World(10, 10, self)
         self.sprites.append(self.world)
@@ -33,7 +34,7 @@ class GameSpace:
                 if event.type == KEYDOWN:
                     self.tank.key_handler(event.key)
                 if event.type == MOUSEBUTTONDOWN:
-                    bullet = self.tank.Bullet(self.tank.f_angle, self.tank.px, self.tank.py)
+                    bullet = Bullet(self.tank.turret_direction, self.tank.px, self.tank.py, self)
                     self.sprites.append(bullet)
                     self.tank.fire_sound.play()
 
