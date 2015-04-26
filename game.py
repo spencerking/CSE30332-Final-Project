@@ -18,10 +18,10 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
-        self.tank = Tank(1)
+        self.tank = Tank('green', self)
         self.sprites.append(self.tank)
         self.world = World(10, 10, self)
-        self.player = Tank(1, self)
+        self.sprites.append(self.world)
 
         while 1:
             self.clock.tick(60)
@@ -39,9 +39,7 @@ class GameSpace:
 
             self.screen.fill(self.black)
 
-            self.world.tick() # World.tick() blits its tiles
             for s in self.sprites:
                 s.tick()
-                self.screen.blit(s.image, s.rect)
 
             pygame.display.flip()

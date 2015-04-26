@@ -7,49 +7,36 @@ from pygame.locals import *
 class Tank(pygame.sprite.Sprite):
 	def __init__(self, type, gs=None):
 		pygame.sprite.Sprite.__init__(self)
+		self.gs = gs
+		self.type = type
 
-		self.dir_str = None
-
-		#stores which tile the tank is currently on, updates as the tank moves
-		self.curr_tile = [0, 0]
-
-		#direction is initially NW, 1 is N, 2 NE, etc.
+		# Direction is initially NW, 1 is N, 2 NE, etc.
 		self.direction = 0
-		self.px = 0
-		self.py = 0
-		self.f_angle = 0
-
 		'''
-				NW
-	W						N
+			NW
+	W				N
 
 
-SW									NE
+SW						NE
 
 
-	S						E
-				SE				
+	S				E
+			SE				
 		'''
 
-		#pass the tank type to determine which image to use
-		if type == 1:
-			self.dir_str = 'green'
+		# Initialize based on tank type
+		if self.type == 'green':
 			self.health = 150
 			self.strength = 5
-		elif type == 2:
-			self.dir_str = 'blue'
+		elif self.type == 'blue':
 			self.health = 100
 			self.strength = 10
-		elif type == 3:
-			self.dir_str = 'red'
+		elif self.type == 'red':
 			self.health = 75
 			self.strength = 15
 
-		self.tank_image = pygame.image.load('tank/' + self.dir_str + '/tank%d.bmp' % self.direction)
-		self.turret_image = pygame.image.load('tank/' + self.dir_str + '/turret%d.bmp' % self.direction)
-
-		# keep original image to limit resize errors
-		self.orig_turret = self.turret_image
+		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.bmp' % self.direction)
+		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.bmp' % self.direction)
 
 		#look into masking instead
 		self.rect = self.tank_image.get_rect()
@@ -57,19 +44,41 @@ SW									NE
 		self.fire_sound = pygame.mixer.Sound("audio/tank_fire.wav")
 		self.move_sound = pygame.mixer.Sound("tank_move.wav")
 
-	def tick(self):
-		# get the moues x and y position for the turret
-		mx, my = pygame.mouse.get_pos()
+		# Stores which tile the tank is currently on, updates as the tank moves
+		self.curr_tile = [0, 0]
 
-		#probably reuse the rotation stuff from the pygame primer here
-		rot_angle = 360 - math.atan2(my-self.py, mx-self.px)*180/math.pi
-		fire_angle = math.atan2(my-self.py, mx-self.px)
-		rot_img = pygame.transform.rotate(self.orig_turret, rot_angle)
-		self.turret_image = rot_img
-		self.f_angle = fire_angle
+		self.px = self.rect.center[0]
+		self.py = self.rect.center[1]
+		self.f_angle = 0
+
+	def tick(self):
+		# Determine the turret image & fire direction based on mouse position
+		mx, my = pygame.mouse.get_pos()
+		theta = math.atan2(my-self.py, mx-self.px)
+		angle = (90 - ((theta*180)/math.pi)) % 360
+
+		if 22.5 < angle <= 67.5:
+			self.turret_image = pygame.image.load('tank/'+self.type+'/turret7.bmp')
+		elif 67.5 < angle <= 112.5:
+			self.turret_image = pygame.image.load('tank/'+self.type+'/turret6.bmp')
+		elif 112.5 < angle <= 157.5:
+			self.turret_image = pygame.image.load('tank/'+self.type+'/turret5.bmp')
+		elif 157.5 < angle <= 202.5:
+			self.turret_image = pygame.image.load('tank/'+self.type+'/turret4.bmp')
+		elif 202.5 < angle <= 247.5:
+			self.turret_image = pygame.image.load('tank/'+self.type+'/turret3.bmp')
+		elif 247.5 < angle <= 292.5:
+			self.turret_image = pygame.image.load('tank/'+self.type+'/turret2.bmp')
+		elif 292.5 < angle <= 337.5:
+			self.turret_image = pygame.image.load('tank/'+self.type+'/turret1.bmp')
+		else:
+			self.turret_image = pygame.image.load('tank/'+self.type+'/turret0.bmp')
+
+		# Draw tank and turret
+		self.gs.screen.blit(self.tank_image, self.rect)
+		self.gs.screen.blit(self.turret_image, self.turret_image.get_rect())
 
 	def move(self, orientation):
-		#MOVING THE TANK FORWARD
 		if orientation == "forward":
 			if self.direction == 0:
 				self.rect = self.rect.move(0,-45)
@@ -99,7 +108,7 @@ SW									NE
 				self.rect = self.rect.move(-91,-45)
 				px -= 91
 				py -= 45
-		#MOVING THE TANK BACKWARD
+
 		elif orientation == "backward":
 			if self.direction == 0:
 				self.rect = self.rect.move(0,45)
