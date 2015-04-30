@@ -40,7 +40,7 @@ class GameSpace:
                 #For KEYDOWN events pass the map list to player as well
                 #This allows for tile property comparisons
                 if event.type == KEYDOWN:
-                    self.player.key_handler(event.key, self.world.map)
+                    self.player.key_handler(event.key)
                     # TODO: send key event to other player
                 if event.type == MOUSEBUTTONDOWN:
                     bullet = Bullet(self.player.turret_direction, self.player.rect[0], self.player.rect[1], self)

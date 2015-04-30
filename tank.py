@@ -62,10 +62,10 @@ SW						NE
 		self.gs.screen.blit(self.turret_image, self.rect)
 
 	#compares a tank tile position against that tile on the world map
-	def check_tile(self, world_map, x_coord, y_coord):
+	def check_tile(self, x_coord, y_coord):
 		#if world_map tile can't be moved to, return false
 		#else update tank properties and return true
-		check_list = world_map[x_coord]
+		check_list = self.gs.world.map[x_coord]
 		print "check tiles"
 		print check_list[y_coord].type
 		if check_list[y_coord].type == 2:
@@ -77,7 +77,7 @@ SW						NE
 
 	#Need to compare the world map tile against the tile the tank will be moving to
 	#This will determine current properties of the tank or whether that tile can be moved to
-	def move(self, orientation, world_map):
+	def move(self, orientation):
 		if orientation == 'forward':
 			if self.direction == 0:
 				dx = 0
@@ -160,7 +160,7 @@ SW						NE
 		else:
 			y = self.curr_tile[1]
 
-		if self.check_tile(world_map, x, y):
+		if self.check_tile(x, y):
 			self.curr_tile = (x, y)
 			self.rect = self.rect.move(dx,dy)
 
@@ -168,13 +168,13 @@ SW						NE
 	def fire(self):
 		self.fire_sound.play()
 
-	def key_handler(self, keycode, world_map):
+	def key_handler(self, keycode):
 		# 8 directions
 		# up and down move forward and back, right and left change direction
 		if keycode == K_DOWN:
-			self.move('backward', world_map)
+			self.move('backward')
 		elif keycode == K_UP:
-			self.move('forward', world_map)
+			self.move('forward')
 		elif keycode == K_RIGHT:
 			self.direction += 1
 			if self.direction > 7:
