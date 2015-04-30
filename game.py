@@ -22,7 +22,11 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
+<<<<<<< HEAD
         self.world = World(7, 7, self)
+=======
+        self.world = World(10, 10, self)
+>>>>>>> 9cff7ff47dad6bcb1879efb02604446e05db4b7a
         self.sprites.append(self.world)
         self.player = Player('green', (0,0), self)
         self.sprites.append(self.player)
@@ -36,8 +40,10 @@ class GameSpace:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
+                #For KEYDOWN events pass the map list to player as well
+                #This allows for tile property comparisons
                 if event.type == KEYDOWN:
-                    self.player.key_handler(event.key)
+                    self.player.key_handler(event.key, self.world.map)
                     # TODO: send key event to other player
                 if event.type == MOUSEBUTTONDOWN:
                     bullet = Bullet(self.player.turret_direction, self.player.px, self.player.py, self)
