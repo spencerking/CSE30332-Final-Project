@@ -78,56 +78,36 @@ SW						NE
 	#Need to compare the world map tile against the tile the tank will be moving to
 	#This will determine current properties of the tank or whether that tile can be moved to
 	def move(self, orientation, world_map):
-		# TODO: update curr_tile each move
 		if orientation == 'forward':
 			if self.direction == 0:
-				#TODO compare the change in pos against the world map tile at that location
-				#if water or some obstacle, don't move the rect, otherwise move and update tank properties
-				#probably make some method to do this, simpler than putting the conditionals in every case
-				x = self.curr_tile[0]
-				y = self.curr_tile[1] - 1
 				dx = 0
 				dy = -120
 				
 			elif self.direction == 1:
-				x = self.curr_tile[0] + 1
-				y = self.curr_tile[1] - 1
 				dx = 80
 				dy = -60
 
 			elif self.direction == 2:
-				x = self.curr_tile[0] + 1
-				y = self.curr_tile[1]
 				dx = 160
 				dy = 0
 
 			elif self.direction == 3:
-				x = self.curr_tile[0] + 1
-				y = self.curr_tile[1] + 1
 				dx = 80
 				dy = 60
 
 			elif self.direction == 4:
-				x = self.curr_tile[0]
-				y = self.curr_tile[1] + 1
 				dx = 0
 				dy = 120
 
 			elif self.direction == 5:
-				x = self.curr_tile[0] - 1
-				y = self.curr_tile[1] + 1
 				dx = -80
 				dy = 60
 
 			elif self.direction == 6:
-				x = self.curr_tile[0] - 1
-				y = self.curr_tile[1]
 				dx = -160
 				dy = 0
 
 			elif self.direction == 7:
-				x = self.curr_tile[0] - 1
-				y = self.curr_tile[1] - 1
 				dx = -80
 				dy = -60
 
@@ -163,6 +143,22 @@ SW						NE
 			elif self.direction == 7:
 				dx = 80
 				dy = 60
+
+
+		#Calculate the new tile for the tank
+		if dx > 0:
+			x = self.curr_tile[0] + 1
+		elif dx < 0:
+			x = self.curr_tile[0] - 1
+		else:
+			x  = self.curr_tile[0]
+
+		if dy > 0:
+			y = self.curr_tile[1] + 1
+		elif dy < 0:
+			y = self.curr_tile[1] - 1
+		else:
+			y = self.curr_tile[1]
 
 		if self.check_tile(world_map, x, y):
 			self.curr_tile = (x, y)
