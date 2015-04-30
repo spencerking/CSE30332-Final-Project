@@ -2,6 +2,7 @@
 
 import pygame
 from pygame.locals import *
+from world import iso_from_cartesian
 
 class Tank(pygame.sprite.Sprite):
 	def __init__(self, type, pos, gs=None):
@@ -47,11 +48,9 @@ SW						NE
 		# Stores which tile the tank is currently on, updates as the tank moves
 		self.curr_tile = pos
 
-		#163 by 123
-		#move tank to pos
-		self.rect = self.rect.move(pos[0]*163, pos[1]*123)
+		adj_pos = iso_from_cartesian(pos[0]*80-8, pos[1]*80-8)
+		self.rect = self.rect.move(adj_pos)
 
-		
 		self.px = self.rect.center[0]
 		self.py = self.rect.center[1]
 
@@ -79,39 +78,39 @@ SW						NE
 				#TODO compare the change in pos against the world map tile at that location
 				#if water or some obstacle, don't move the rect, otherwise move and update tank properties
 				#probably make some method to do this, simpler than putting the conditionals in every case
-				self.rect = self.rect.move(0,-80)
+				self.rect = self.rect.move(0,-120)
 			elif self.direction == 1:
-				self.rect = self.rect.move(40,-40)
+				self.rect = self.rect.move(80,-60)
 			elif self.direction == 2:
-				self.rect = self.rect.move(80,0)
+				self.rect = self.rect.move(160,0)
 			elif self.direction == 3:
-				self.rect = self.rect.move(40,40)
+				self.rect = self.rect.move(80,60)
 			elif self.direction == 4:
-				self.rect = self.rect.move(0,80)
+				self.rect = self.rect.move(0,120)
 			elif self.direction == 5:
-				self.rect = self.rect.move(-40,40)
+				self.rect = self.rect.move(-80,60)
 			elif self.direction == 6:
-				self.rect = self.rect.move(-80,0)
+				self.rect = self.rect.move(-160,0)
 			elif self.direction == 7:
-				self.rect = self.rect.move(-40,-40)
+				self.rect = self.rect.move(-80,-60)
 
 		elif orientation == 'backward':
 			if self.direction == 0:
-				self.rect = self.rect.move(0,80)
+				self.rect = self.rect.move(0,120)
 			elif self.direction == 1:
-				self.rect = self.rect.move(-40,40)
+				self.rect = self.rect.move(-80,60)
 			elif self.direction == 2:
-				self.rect = self.rect.move(-80,0)
+				self.rect = self.rect.move(-160,0)
 			elif self.direction == 3:
-				self.rect = self.rect.move(-40,-40)
+				self.rect = self.rect.move(-80,-60)
 			elif self.direction == 4:
-				self.rect = self.rect.move(0,-80)
+				self.rect = self.rect.move(0,-120)
 			elif self.direction == 5:
-				self.rect = self.rect.move(40,-40)
+				self.rect = self.rect.move(80,-60)
 			elif self.direction == 6:
-				self.rect = self.rect.move(80,0)
+				self.rect = self.rect.move(160,0)
 			elif self.direction == 7:
-				self.rect = self.rect.move(40,40)
+				self.rect = self.rect.move(80,60)
 
 	# GameSpace instance creates and manages the bullet object
 	def fire(self):
