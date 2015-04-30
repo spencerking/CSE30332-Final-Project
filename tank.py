@@ -1,7 +1,6 @@
 # Spencer King, David Wu, 4/23/15, CSE 30332
 
 import pygame
-import math
 from pygame.locals import *
 
 class Tank(pygame.sprite.Sprite):
@@ -52,28 +51,6 @@ SW						NE
 		# Update tank image based on current direction
 		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
 
-		# Determine the turret image & fire direction based on mouse position
-		mx, my = pygame.mouse.get_pos()
-		theta = math.atan2(my-self.rect.center[1], mx-self.rect.center[0])
-		self.angle = (90 - ((theta*180)/math.pi)) % 360
-
-		if 22.5 < self.angle <= 67.5:
-			self.turret_direction = 7
-		elif 67.5 < self.angle <= 112.5:
-			self.turret_direction = 6
-		elif 112.5 < self.angle <= 157.5:
-			self.turret_direction = 5
-		elif 157.5 < self.angle <= 202.5:
-			self.turret_direction = 4
-		elif 202.5 < self.angle <= 247.5:
-			self.turret_direction = 3
-		elif 247.5 < self.angle <= 292.5:
-			self.turret_direction = 2
-		elif 292.5 < self.angle <= 337.5:
-			self.turret_direction = 1
-		else:
-			self.turret_direction = 0
-
 		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.png' % self.turret_direction)
 
 		# Draw tank and turret
@@ -85,37 +62,37 @@ SW						NE
 			if self.direction == 0:
 				self.rect = self.rect.move(0,-45)
 			elif self.direction == 1:
-				self.rect = self.rect.move(91,-45)
+				self.rect = self.rect.move(50,-45)
 			elif self.direction == 2:
-				self.rect = self.rect.move(91,0)
+				self.rect = self.rect.move(50,0)
 			elif self.direction == 3:
-				self.rect = self.rect.move(91,45)
+				self.rect = self.rect.move(50,45)
 			elif self.direction == 4:
 				self.rect = self.rect.move(0,45)
 			elif self.direction == 5:
-				self.rect = self.rect.move(-91,45)
+				self.rect = self.rect.move(-50,45)
 			elif self.direction == 6:
-				self.rect = self.rect.move(-91,0)
+				self.rect = self.rect.move(-50,0)
 			elif self.direction == 7:
-				self.rect = self.rect.move(-91,-45)
+				self.rect = self.rect.move(-50,-45)
 
 		elif orientation == 'backward':
 			if self.direction == 0:
 				self.rect = self.rect.move(0,45)
 			elif self.direction == 1:
-				self.rect = self.rect.move(-91,45)
+				self.rect = self.rect.move(-50,45)
 			elif self.direction == 2:
-				self.rect = self.rect.move(-91,0)
+				self.rect = self.rect.move(-50,0)
 			elif self.direction == 3:
-				self.rect = self.rect.move(-91,-45)
+				self.rect = self.rect.move(-50,-45)
 			elif self.direction == 4:
 				self.rect = self.rect.move(0,-45)
 			elif self.direction == 5:
-				self.rect = self.rect.move(91,-45)
+				self.rect = self.rect.move(50,-45)
 			elif self.direction == 6:
-				self.rect = self.rect.move(91,0)
+				self.rect = self.rect.move(50,0)
 			elif self.direction == 7:
-				self.rect = self.rect.move(91,45)
+				self.rect = self.rect.move(50,45)
 
 	# GameSpace instance creates and manages the bullet object
 	def fire(self):

@@ -3,7 +3,7 @@
 import sys
 import pygame
 from pygame.locals import *
-from twisted.internet.protcol import Factory, Protocol
+from twisted.internet.protocol import Factory, Protocol
 from twisted.internet import reactor
 from world import World
 from tank import Tank, Bullet
@@ -23,9 +23,9 @@ class GameSpace:
         self.sprites = []
 
         self.player = Player('green', (0,0), self)
-        self.sprites.append(self.tank)
-        self.enemy = Enemy('green', (5,5), self)
-        self.sprites.append(self.tank2)
+        self.sprites.append(self.player)
+        self.enemy = Enemy('blue', (5,5), self)
+        self.sprites.append(self.enemy)
         self.world = World(10, 10, self)
         self.sprites.append(self.world)
 
