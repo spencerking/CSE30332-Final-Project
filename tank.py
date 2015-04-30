@@ -65,6 +65,8 @@ SW						NE
 	def check_tile(self, x_coord, y_coord):
 		#if world_map tile can't be moved to, return false
 		#else update tank properties and return true
+		print x_coord
+		print y_coord
 		check_list = self.gs.world.map[x_coord]
 		print "check tiles"
 		print check_list[y_coord].type
@@ -146,19 +148,47 @@ SW						NE
 
 
 		#Calculate the new tile for the tank
-		if dx > 0:
-			x = self.curr_tile[0] + 1
-		elif dx < 0:
-			x = self.curr_tile[0] - 1
-		else:
-			x  = self.curr_tile[0]
 
-		if dy > 0:
-			y = self.curr_tile[1] + 1
-		elif dy < 0:
-			y = self.curr_tile[1] - 1
-		else:
+		#down right diagonal 
+		if dx > 0 and dy > 0:
+			x = self.curr_tile[0] + 1
 			y = self.curr_tile[1]
+
+		#up left diagonal
+		elif dx < 0 and dy < 0:
+			x = self.curr_tile[0] - 1
+			y = self.curr_tile[1]
+
+		#up right diagonal 
+		elif dx > 0 and dy < 0:
+			x = self.curr_tile[0]
+			y = self.curr_tile[1] - 1
+
+		#down left diagonal 
+		elif dx < 0 and dy > 0:
+			x = self.curr_tile[0]
+			y = self.curr_tile[1] + 1
+
+		#straight right
+		elif dx > 0 and dy == 0:
+			x = self.curr_tile[0] + 1
+			y = self.curr_tile[1] + 1
+
+		#straight left
+		elif dx < 0 and dy == 0:
+			x = self.curr_tile[0] - 1
+			y = self.curr_tile[1] - 1
+
+		#straight down
+		elif dx == 0 and dy > 0:
+			x = self.curr_tile[0] + 1
+			y = self.curr_tile[1] + 1
+
+		#straight up
+		elif dx == 0 and dy < 0:
+			x = self.curr_tile[0] - 1
+			y = self.curr_tile[1] - 1
+
 
 		if self.check_tile(x, y):
 			self.curr_tile = (x, y)
