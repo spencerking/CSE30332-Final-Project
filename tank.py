@@ -66,9 +66,13 @@ SW						NE
 		#if world_map tile can't be moved to, return false
 		#else update tank properties and return true
 		check_list = world_map[tank_tile[0]]
+		print "check tiles"
+		print check_list[tank_tile[1]].type
 		if check_list[tank_tile[1]].type == 2:
+			print "water"
 			return False
 		else:
+			print "true"
 			return True  
 
 	#Need to compare the world map tile against the tile the tank will be moving to
@@ -80,22 +84,29 @@ SW						NE
 				#TODO compare the change in pos against the world map tile at that location
 				#if water or some obstacle, don't move the rect, otherwise move and update tank properties
 				#probably make some method to do this, simpler than putting the conditionals in every case
-				if check_tile(world_map, self.curr_tile):
+				if self.check_tile(world_map, self.curr_tile):
 					self.rect = self.rect.move(0,-120)
 			elif self.direction == 1:
-				self.rect = self.rect.move(80,-60)
+				if self.check_tile(world_map, self.curr_tile):
+					self.rect = self.rect.move(80,-60)
 			elif self.direction == 2:
-				self.rect = self.rect.move(160,0)
+				if self.check_tile(world_map, self.curr_tile):
+					self.rect = self.rect.move(160,0)
 			elif self.direction == 3:
-				self.rect = self.rect.move(80,60)
+				if self.check_tile(world_map, self.curr_tile):
+					self.rect = self.rect.move(80,60)
 			elif self.direction == 4:
-				self.rect = self.rect.move(0,120)
+				if self.check_tile(world_map, self.curr_tile):
+					self.rect = self.rect.move(0,120)
 			elif self.direction == 5:
-				self.rect = self.rect.move(-80,60)
+				if self.check_tile(world_map, self.curr_tile):
+					self.rect = self.rect.move(-80,60)
 			elif self.direction == 6:
-				self.rect = self.rect.move(-160,0)
+				if self.check_tile(world_map, self.curr_tile):
+					self.rect = self.rect.move(-160,0)
 			elif self.direction == 7:
-				self.rect = self.rect.move(-80,-60)
+				if self.check_tile(world_map, self.curr_tile):
+					self.rect = self.rect.move(-80,-60)
 
 		elif orientation == 'backward':
 			if self.direction == 0:
