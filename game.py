@@ -22,12 +22,12 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
+        self.world = World(10, 10, self)
+        self.sprites.append(self.world)
         self.player = Player('green', (0,0), self)
         self.sprites.append(self.player)
         self.enemy = Enemy('blue', (5,5), self)
         self.sprites.append(self.enemy)
-        self.world = World(10, 10, self)
-        self.sprites.append(self.world)
 
         while 1:
             self.clock.tick(60)

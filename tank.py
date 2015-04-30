@@ -123,7 +123,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.gs = gs
 		self.image = pygame.image.load('tank/laser.png')
 		self.rect = self.image.get_rect()
-		self.rect = self.rect.move(self.gs.tank.rect.center)
+		self.rect = self.rect.move(self.gs.player.rect.center)
 		self.direction = direction
 		self.dx = 0
 		self.dy = 0
