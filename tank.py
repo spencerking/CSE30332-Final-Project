@@ -66,9 +66,13 @@ SW						NE
 
 	#compares a tank tile position against that tile on the world map
 	def check_tile(self, world_map, tank_tile):
-		print "check a tile"
-		#TODO if world_map tile can't be moved to, return false
+		#if world_map tile can't be moved to, return false
 		#else update tank properties and return true
+		check_list = world_map[tank_tile[0]]
+		if check_list[tank_tile[1]].type == 2:
+			return False
+		else:
+			return True  
 
 	#Need to compare the world map tile against the tile the tank will be moving to
 	#This will determine current properties of the tank or whether that tile can be moved to
@@ -78,7 +82,8 @@ SW						NE
 				#TODO compare the change in pos against the world map tile at that location
 				#if water or some obstacle, don't move the rect, otherwise move and update tank properties
 				#probably make some method to do this, simpler than putting the conditionals in every case
-				self.rect = self.rect.move(0,-120)
+				if check_tile(world_map, self.curr_tile):
+					self.rect = self.rect.move(0,-120)
 			elif self.direction == 1:
 				self.rect = self.rect.move(80,-60)
 			elif self.direction == 2:
