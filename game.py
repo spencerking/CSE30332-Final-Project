@@ -36,8 +36,10 @@ class GameSpace:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
+                #For KEYDOWN events pass the map list to player as well
+                #This allows for tile property comparisons
                 if event.type == KEYDOWN:
-                    self.player.key_handler(event.key)
+                    self.player.key_handler(event.key, self.world.map)
                     # TODO: send key event to other player
                 if event.type == MOUSEBUTTONDOWN:
                     bullet = Bullet(self.player.turret_direction, self.player.px, self.player.py, self)

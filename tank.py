@@ -10,9 +10,6 @@ class Tank(pygame.sprite.Sprite):
 		self.type = type
 		self.fire_sound = pygame.mixer.Sound("audio/tank_fire.wav")
 		self.move_sound = pygame.mixer.Sound("tank_move.wav")
-		# Stores which tile the tank is currently on, updates as the tank moves
-		self.curr_tile = pos
-		# TODO: move tank to pos
 
 		# Direction is initially NW, 1 is N, 2 NE, etc.
 		self.direction = 0
@@ -39,11 +36,22 @@ SW						NE
 			self.health = 75
 			self.strength = 15
 
+
+		#Load the appropriate tank and turret images
 		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
 		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.png' % self.direction)
 
 		#look into masking instead
 		self.rect = self.tank_image.get_rect()
+
+		# Stores which tile the tank is currently on, updates as the tank moves
+		self.curr_tile = pos
+
+		#163 by 123
+		#move tank to pos
+		self.rect = self.rect.move(pos[0]*163, pos[1]*123)
+
+		
 		self.px = self.rect.center[0]
 		self.py = self.rect.center[1]
 
@@ -57,9 +65,20 @@ SW						NE
 		self.gs.screen.blit(self.tank_image, self.rect)
 		self.gs.screen.blit(self.turret_image, self.rect)
 
-	def move(self, orientation):
+	#compares a tank tile position against that tile on the world map
+	def check_tile(self, world_map, tank_tile):
+		print "check a tile"
+		#TODO if world_map tile can't be moved to, return false
+		#else update tank properties and return true
+
+	#Need to compare the world map tile against the tile the tank will be moving to
+	#This will determine current properties of the tank or whether that tile can be moved to
+	def move(self, orientation, world_map):
 		if orientation == 'forward':
 			if self.direction == 0:
+				#TODO compare the change in pos against the world map tile at that location
+				#if water or some obstacle, don't move the rect, otherwise move and update tank properties
+				#probably make some method to do this, simpler than putting the conditionals in every case
 				self.rect = self.rect.move(0,-45)
 			elif self.direction == 1:
 				self.rect = self.rect.move(50,-45)
@@ -98,13 +117,13 @@ SW						NE
 	def fire(self):
 		self.fire_sound.play()
 
-	def key_handler(self, keycode):
+	def key_handler(self, keycode, world_map):
 		# 8 directions
 		# up and down move forward and back, right and left change direction
 		if keycode == K_DOWN:
-			self.move('backward')
+			self.move('backward', world_map)
 		elif keycode == K_UP:
-			self.move('forward')
+			self.move('forward', world_map)
 		elif keycode == K_RIGHT:
 			self.direction += 1
 			if self.direction > 7:
