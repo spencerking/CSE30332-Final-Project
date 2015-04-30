@@ -51,9 +51,6 @@ SW						NE
 		adj_pos = iso_from_cartesian(pos[0]*80-8, pos[1]*80-8)
 		self.rect = self.rect.move(adj_pos)
 
-		self.px = self.rect.center[0]
-		self.py = self.rect.center[1]
-
 	def tick(self):
 		# Update tank image based on current direction
 		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
@@ -73,6 +70,7 @@ SW						NE
 	#Need to compare the world map tile against the tile the tank will be moving to
 	#This will determine current properties of the tank or whether that tile can be moved to
 	def move(self, orientation, world_map):
+		# TODO: update curr_tile each move
 		if orientation == 'forward':
 			if self.direction == 0:
 				#TODO compare the change in pos against the world map tile at that location
@@ -145,28 +143,27 @@ class Bullet(pygame.sprite.Sprite):
 		self.direction = direction
 		self.dx = 0
 		self.dy = 0
-		self.speed = 5
 
 		if self.direction == 0:
-			self.dy = self.speed
+			self.dy = 5
 		elif self.direction == 1:
-			self.dx = -self.speed
-			self.dy = self.speed
+			self.dx = -4
+			self.dy = 3
 		elif self.direction == 2:
-			self.dx = -self.speed
+			self.dx = -5
 		elif self.direction == 3:
-			self.dx = -self.speed
-			self.dy = -self.speed
+			self.dx = -4
+			self.dy = -3
 		elif self.direction == 4:
-			self.dy = -self.speed
+			self.dy = -5
 		elif self.direction == 5:
-			self.dx = self.speed
-			self.dy = -self.speed
+			self.dx = 4
+			self.dy = -3
 		elif self.direction == 6:
-			self.dx = self.speed
+			self.dx = 5
 		elif self.direction == 7:
-			self.dx = self.speed
-			self.dy = self.speed
+			self.dx = 4
+			self.dy = 3
 
 	def tick(self):
 		self.rect = self.rect.move(self.dx, self.dy)

@@ -24,6 +24,7 @@ class GameSpace:
 
         self.world = World(7, 7, self)
         self.sprites.append(self.world)
+        # TODO: check if tank location is not water
         self.player = Player('green', (0,0), self)
         self.sprites.append(self.player)
         self.enemy = Enemy('blue', (5,5), self)
@@ -42,7 +43,7 @@ class GameSpace:
                     self.player.key_handler(event.key, self.world.map)
                     # TODO: send key event to other player
                 if event.type == MOUSEBUTTONDOWN:
-                    bullet = Bullet(self.player.turret_direction, self.player.px, self.player.py, self)
+                    bullet = Bullet(self.player.turret_direction, self.player.rect[0], self.player.rect[1], self)
                     self.sprites.append(bullet)
                     self.player.fire_sound.play()
                     # TODO: send mouse event to other player

@@ -30,6 +30,7 @@ class Tile(pygame.sprite.Sprite):
     def __init__(self, imageid, pos, world=None):
         pygame.sprite.Sprite.__init__(self)
         self.world = world
+        self.type = imageid
         randid = randint(1, 3)
         if imageid == 0:
             filename = 'grass%d.png' % randid
