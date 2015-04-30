@@ -65,16 +65,17 @@ SW						NE
 	def check_tile(self, x_coord, y_coord):
 		#if world_map tile can't be moved to, return false
 		#else update tank properties and return true
-		print x_coord
-		print y_coord
+
+		#don't want to go outside the map
+		if x_coord < 0 or y_coord < 0:
+			return False
+		elif x_coord > 6 or y_coord > 6:
+			return False
+
 		check_list = self.gs.world.map[x_coord]
-		print "check tiles"
-		print check_list[y_coord].type
 		if check_list[y_coord].type == 2:
-			print "water"
 			return False
 		else:
-			print "true"
 			return True  
 
 	#Need to compare the world map tile against the tile the tank will be moving to
