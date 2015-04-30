@@ -78,6 +78,8 @@ SW						NE
 	#Need to compare the world map tile against the tile the tank will be moving to
 	#This will determine current properties of the tank or whether that tile can be moved to
 	def move(self, orientation, world_map):
+		dx = 0
+		dy = 0
 		# TODO: update curr_tile each move
 		if orientation == 'forward':
 			if self.direction == 0:
@@ -85,46 +87,61 @@ SW						NE
 				#if water or some obstacle, don't move the rect, otherwise move and update tank properties
 				#probably make some method to do this, simpler than putting the conditionals in every case
 				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(0,-120)
+					dy = -120
 			elif self.direction == 1:
 				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(80,-60)
+					dx = 80
+					dy = -60
 			elif self.direction == 2:
 				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(160,0)
+					dx = 160
 			elif self.direction == 3:
 				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(80,60)
+					dx = 80
+					dy = 60
 			elif self.direction == 4:
 				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(0,120)
+					dy = 120
 			elif self.direction == 5:
 				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(-80,60)
+					dx = -80
+					dy = 60
 			elif self.direction == 6:
 				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(-160,0)
+					dx = -160
 			elif self.direction == 7:
 				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(-80,-60)
+					dx = 80
+					dy = 60
 
 		elif orientation == 'backward':
 			if self.direction == 0:
-				self.rect = self.rect.move(0,120)
+				dy = 120
 			elif self.direction == 1:
-				self.rect = self.rect.move(-80,60)
+				dx = -80
+				dy = 60
 			elif self.direction == 2:
-				self.rect = self.rect.move(-160,0)
+				dx = -160
 			elif self.direction == 3:
-				self.rect = self.rect.move(-80,-60)
+				dx = -80
+				dy = -60
 			elif self.direction == 4:
-				self.rect = self.rect.move(0,-120)
+				dy = -120
 			elif self.direction == 5:
-				self.rect = self.rect.move(80,-60)
+				dx = 80
+				dy = -60
 			elif self.direction == 6:
-				self.rect = self.rect.move(160,0)
+				dx = 160
 			elif self.direction == 7:
-				self.rect = self.rect.move(80,60)
+				dx = 80
+				dy = 60
+
+		# Animate in 100 steps
+		#for i in range(100):
+		#	self.rect.move(dx/100.0, dy/100.0)
+
+		print dx, dy
+		self.rect.move(dx, dy)
 
 	# GameSpace instance creates and manages the bullet object
 	def fire(self):
