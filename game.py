@@ -3,9 +3,12 @@
 import sys
 import pygame
 from pygame.locals import *
+from twisted.internet.protcol import Factory, Protocol
+from twisted.internet import reactor
 from world import World
-from tank import Tank
-from tank import Bullet
+from tank import Tank, Bullet
+from player import Player
+from enemy import Enemy
 
 class GameSpace:
     def main(self):
@@ -19,8 +22,10 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
-        self.tank = Tank('green', (0,0), self)
+        self.player = Player('green', (0,0), self)
         self.sprites.append(self.tank)
+        self.enemy = Enemy('green', (5,5), self)
+        self.sprites.append(self.tank2)
         self.world = World(10, 10, self)
         self.sprites.append(self.world)
 
@@ -32,11 +37,13 @@ class GameSpace:
                 if event.type == pygame.QUIT:
                     sys.exit()
                 if event.type == KEYDOWN:
-                    self.tank.key_handler(event.key)
+                    self.player.key_handler(event.key)
+                    # TODO: send key event to other player
                 if event.type == MOUSEBUTTONDOWN:
-                    bullet = Bullet(self.tank.turret_direction, self.tank.px, self.tank.py, self)
+                    bullet = Bullet(self.player.turret_direction, self.player.px, self.player.py, self)
                     self.sprites.append(bullet)
-                    self.tank.fire_sound.play()
+                    self.player.fire_sound.play()
+                    # TODO: send mouse event to other player
 
             self.screen.fill(self.black)
 

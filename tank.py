@@ -13,6 +13,7 @@ class Tank(pygame.sprite.Sprite):
 		self.move_sound = pygame.mixer.Sound("tank_move.wav")
 		# Stores which tile the tank is currently on, updates as the tank moves
 		self.curr_tile = pos
+		# TODO: move tank to pos
 
 		# Direction is initially NW, 1 is N, 2 NE, etc.
 		self.direction = 0
@@ -53,7 +54,7 @@ SW						NE
 
 		# Determine the turret image & fire direction based on mouse position
 		mx, my = pygame.mouse.get_pos()
-		theta = math.atan2(my-self.py, mx-self.px)
+		theta = math.atan2(my-self.rect.center[1], mx-self.rect.center[0])
 		self.angle = (90 - ((theta*180)/math.pi)) % 360
 
 		if 22.5 < self.angle <= 67.5:
@@ -80,77 +81,53 @@ SW						NE
 		self.gs.screen.blit(self.turret_image, self.rect)
 
 	def move(self, orientation):
-		if orientation == "forward":
+		if orientation == 'forward':
 			if self.direction == 0:
 				self.rect = self.rect.move(0,-45)
-				self.py -= 45
 			elif self.direction == 1:
 				self.rect = self.rect.move(91,-45)
-				self.px += 91
-				self.py -= 45
 			elif self.direction == 2:
 				self.rect = self.rect.move(91,0)
-				self.px += 91
 			elif self.direction == 3:
 				self.rect = self.rect.move(91,45)
-				self.px += 91
-				self.py += 45
 			elif self.direction == 4:
 				self.rect = self.rect.move(0,45)
-				self.py += 45
 			elif self.direction == 5:
 				self.rect = self.rect.move(-91,45)
-				self.px -= 91
-				self.py += 45
 			elif self.direction == 6:
 				self.rect = self.rect.move(-91,0)
-				self.px -= 91
 			elif self.direction == 7:
 				self.rect = self.rect.move(-91,-45)
-				self.px -= 91
-				self.py -= 45
 
-		elif orientation == "backward":
+		elif orientation == 'backward':
 			if self.direction == 0:
 				self.rect = self.rect.move(0,45)
-				self.py += 45
 			elif self.direction == 1:
 				self.rect = self.rect.move(-91,45)
-				self.px -= 91
-				self.py += 45
 			elif self.direction == 2:
 				self.rect = self.rect.move(-91,0)
-				self.px -= 91
 			elif self.direction == 3:
 				self.rect = self.rect.move(-91,-45)
-				self.px -= 91
-				self.py -= 45
 			elif self.direction == 4:
 				self.rect = self.rect.move(0,-45)
-				self.py -= 45
 			elif self.direction == 5:
 				self.rect = self.rect.move(91,-45)
-				self.px += 91
-				self.py -= 45
 			elif self.direction == 6:
 				self.rect = self.rect.move(91,0)
-				self.px += 91
 			elif self.direction == 7:
 				self.rect = self.rect.move(91,45)
-				self.px += 91
-				self.py += 45
 
-	#fires a bullet
+	# GameSpace instance creates and manages the bullet object
 	def fire(self):
 		self.fire_sound.play()
 
 	def key_handler(self, keycode):
-		#8 directions
-		#up and down move forward and back, right and left change direction
+		# 8 directions
+		# up and down move forward and back, right and left change direction
 		if keycode == K_DOWN:
-			self.move("backward")
+			self.move('backward')
 		elif keycode == K_UP:
-			self.move("forward")
+			self.move('forward')
 		elif keycode == K_RIGHT:
 			self.direction += 1
 			if self.direction > 7:
@@ -173,31 +150,29 @@ class Bullet(pygame.sprite.Sprite):
 		self.direction = direction
 		self.dx = 0
 		self.dy = 0
-		self.speed = 3
+		self.speed = 5
 
 		if self.direction == 0:
-			self.dy = -self.speed
+			self.dy = self.speed
 		elif self.direction == 1:
-			self.dx = self.speed
-			self.dy = -self.speed
+			self.dx = -self.speed
+			self.dy = self.speed
 		elif self.direction == 2:
-			self.dx = self.speed
+			self.dx = -self.speed
 		elif self.direction == 3:
-			self.dx = self.speed
-			self.dy = self.speed
-		elif self.direction == 4:
-			self.dy = self.speed
-		elif self.direction == 5:
-			self.dx = -self.speed
-			self.dy = self.speed
-		elif self.direction == 6:
-			self.dx = -self.speed
-		elif self.direction == 7:
 			self.dx = -self.speed
 			self.dy = -self.speed
+		elif self.direction == 4:
+			self.dy = -self.speed
+		elif self.direction == 5:
+			self.dx = self.speed
+			self.dy = -self.speed
+		elif self.direction == 6:
+			self.dx = self.speed
+		elif self.direction == 7:
+			self.dx = self.speed
+			self.dy = self.speed
 
 	def tick(self):
 		self.rect = self.rect.move(self.dx, self.dy)
-
-def iso_from_cartesian(x, y):
-    return (x - y, (x + y)/2)
+		self.gs.screen.blit(self.image, self.rect)
