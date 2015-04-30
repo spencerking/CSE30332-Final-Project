@@ -62,13 +62,13 @@ SW						NE
 		self.gs.screen.blit(self.turret_image, self.rect)
 
 	#compares a tank tile position against that tile on the world map
-	def check_tile(self, world_map, tank_tile):
+	def check_tile(self, world_map, x_coord, y_coord):
 		#if world_map tile can't be moved to, return false
 		#else update tank properties and return true
-		check_list = world_map[tank_tile[0]]
+		check_list = world_map[x_coord]
 		print "check tiles"
-		print check_list[tank_tile[1]].type
-		if check_list[tank_tile[1]].type == 2:
+		print check_list[y_coord].type
+		if check_list[y_coord].type == 2:
 			print "water"
 			return False
 		else:
@@ -84,47 +84,89 @@ SW						NE
 				#TODO compare the change in pos against the world map tile at that location
 				#if water or some obstacle, don't move the rect, otherwise move and update tank properties
 				#probably make some method to do this, simpler than putting the conditionals in every case
-				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(0,-120)
+				x = self.curr_tile[0]
+				y = self.curr_tile[1] - 1
+				dx = 0
+				dy = -120
+				
 			elif self.direction == 1:
-				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(80,-60)
+				x = self.curr_tile[0] + 1
+				y = self.curr_tile[1] - 1
+				dx = 80
+				dy = -60
+
 			elif self.direction == 2:
-				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(160,0)
+				x = self.curr_tile[0] + 1
+				y = self.curr_tile[1]
+				dx = 160
+				dy = 0
+
 			elif self.direction == 3:
-				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(80,60)
+				x = self.curr_tile[0] + 1
+				y = self.curr_tile[1] + 1
+				dx = 80
+				dy = 60
+
 			elif self.direction == 4:
-				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(0,120)
+				x = self.curr_tile[0]
+				y = self.curr_tile[1] + 1
+				dx = 0
+				dy = 120
+
 			elif self.direction == 5:
-				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(-80,60)
+				x = self.curr_tile[0] - 1
+				y = self.curr_tile[1] + 1
+				dx = -80
+				dy = 60
+
 			elif self.direction == 6:
-				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(-160,0)
+				x = self.curr_tile[0] - 1
+				y = self.curr_tile[1]
+				dx = -160
+				dy = 0
+
 			elif self.direction == 7:
-				if self.check_tile(world_map, self.curr_tile):
-					self.rect = self.rect.move(-80,-60)
+				x = self.curr_tile[0] - 1
+				y = self.curr_tile[1] - 1
+				dx = -80
+				dy = -60
 
 		elif orientation == 'backward':
 			if self.direction == 0:
-				self.rect = self.rect.move(0,120)
+				dx = 0
+				dy = 120
+
 			elif self.direction == 1:
-				self.rect = self.rect.move(-80,60)
+				dx = -80
+				dy = 60
+
 			elif self.direction == 2:
-				self.rect = self.rect.move(-160,0)
+				dx = -160
+				dy = 0
+
 			elif self.direction == 3:
-				self.rect = self.rect.move(-80,-60)
+				dx = -80
+				dy = -60
+
 			elif self.direction == 4:
-				self.rect = self.rect.move(0,-120)
+				dx = 0
+				dy = -120
+
 			elif self.direction == 5:
-				self.rect = self.rect.move(80,-60)
+				dx = 80
+				dy = -60
+
 			elif self.direction == 6:
-				self.rect = self.rect.move(160,0)
+				dx = 160
+				dy = 0
+
 			elif self.direction == 7:
-				self.rect = self.rect.move(80,60)
+				dx = 80
+				dy = 60
+
+		if self.check_tile(world_map, x, y):
+			self.curr_tile = (x, y)
+			self.rect = self.rect.move(dx,dy)
 
 	# GameSpace instance creates and manages the bullet object
 	def fire(self):
