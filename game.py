@@ -30,6 +30,11 @@ class GameSpace:
         self.enemy = Enemy('blue', (5,5), self)
         self.sprites.append(self.enemy)
 
+        #CHANGE LATER
+        self.player.id = 0
+        self.enemy.id = 1
+
+
         while 1:
             self.clock.tick(60)
 
@@ -37,20 +42,28 @@ class GameSpace:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                #For KEYDOWN events pass the map list to player as well
-                #This allows for tile property comparisons
                 if event.type == KEYDOWN:
                     self.player.key_handler(event.key)
                     # TODO: send key event to other player
                 if event.type == MOUSEBUTTONDOWN:
                     bullet = Bullet(self.player.turret_direction, self.player.rect[0], self.player.rect[1], self)
+                    #CHANGE THIS ID LATER
+                    bullet.id = 0
                     self.sprites.append(bullet)
                     self.player.fire_sound.play()
+
                     # TODO: send mouse event to other player
 
             self.screen.fill(self.black)
 
+            #collision detection
             for s in self.sprites:
                 s.tick()
+                if isinstance(s, Bullet):
+                    if s.rect.colliderect(self.player.rect) and s.id != self.player.id:
+                        self.sprites.remove(s)
+                    if s.rect.colliderect(self.enemy.rect) and s.id != self.enemy.id:
+                        self.sprites.remove(s)
+
 
             pygame.display.flip()

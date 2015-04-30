@@ -11,6 +11,7 @@ class Tank(pygame.sprite.Sprite):
 		self.type = type
 		self.fire_sound = pygame.mixer.Sound("audio/tank_fire.wav")
 		self.move_sound = pygame.mixer.Sound("tank_move.wav")
+		self.id = None
 
 		# Direction is initially NW, 1 is N, 2 NE, etc.
 		self.direction = 0
@@ -228,6 +229,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.direction = direction
 		self.dx = 0
 		self.dy = 0
+		self.id = None
 
 		if self.direction == 0:
 			self.dy = 5
