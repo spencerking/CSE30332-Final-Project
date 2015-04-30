@@ -1,4 +1,4 @@
-# Spencer King, David Wu, 4/23/15, CSE 30332
+# Spencer King, David Wu, 4/23/15, CSE 40332
 
 import pygame
 from pygame.locals import *
@@ -30,7 +30,7 @@ SW						NE
 
 		# Initialize based on tank type
 		if self.type == 'green':
-			self.health = 150
+			self.health = 140
 			self.strength = 5
 		elif self.type == 'blue':
 			self.health = 100
@@ -60,39 +60,39 @@ SW						NE
 	def move(self, orientation):
 		if orientation == 'forward':
 			if self.direction == 0:
-				self.rect = self.rect.move(0,-45)
+				self.rect = self.rect.move(0,-80)
 			elif self.direction == 1:
-				self.rect = self.rect.move(50,-45)
+				self.rect = self.rect.move(40,-40)
 			elif self.direction == 2:
-				self.rect = self.rect.move(50,0)
+				self.rect = self.rect.move(80,0)
 			elif self.direction == 3:
-				self.rect = self.rect.move(50,45)
+				self.rect = self.rect.move(40,40)
 			elif self.direction == 4:
-				self.rect = self.rect.move(0,45)
+				self.rect = self.rect.move(0,80)
 			elif self.direction == 5:
-				self.rect = self.rect.move(-50,45)
+				self.rect = self.rect.move(-40,40)
 			elif self.direction == 6:
-				self.rect = self.rect.move(-50,0)
+				self.rect = self.rect.move(-80,0)
 			elif self.direction == 7:
-				self.rect = self.rect.move(-50,-45)
+				self.rect = self.rect.move(-40,-40)
 
 		elif orientation == 'backward':
 			if self.direction == 0:
-				self.rect = self.rect.move(0,45)
+				self.rect = self.rect.move(0,80)
 			elif self.direction == 1:
-				self.rect = self.rect.move(-50,45)
+				self.rect = self.rect.move(-40,40)
 			elif self.direction == 2:
-				self.rect = self.rect.move(-50,0)
+				self.rect = self.rect.move(-80,0)
 			elif self.direction == 3:
-				self.rect = self.rect.move(-50,-45)
+				self.rect = self.rect.move(-40,-40)
 			elif self.direction == 4:
-				self.rect = self.rect.move(0,-45)
+				self.rect = self.rect.move(0,-80)
 			elif self.direction == 5:
-				self.rect = self.rect.move(50,-45)
+				self.rect = self.rect.move(40,-40)
 			elif self.direction == 6:
-				self.rect = self.rect.move(50,0)
+				self.rect = self.rect.move(80,0)
 			elif self.direction == 7:
-				self.rect = self.rect.move(50,45)
+				self.rect = self.rect.move(40,40)
 
 	# GameSpace instance creates and manages the bullet object
 	def fire(self):
@@ -123,7 +123,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.gs = gs
 		self.image = pygame.image.load('tank/laser.png')
 		self.rect = self.image.get_rect()
-		self.rect = self.rect.move(self.gs.tank.rect.center)
+		self.rect = self.rect.move(self.gs.player.rect.center)
 		self.direction = direction
 		self.dx = 0
 		self.dy = 0

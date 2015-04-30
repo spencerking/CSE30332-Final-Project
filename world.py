@@ -9,8 +9,8 @@ class World:
         self.gs = gs
         self.height = height
         self.width = width
-        self.tile_height = 91
-        self.tile_width = 45
+        self.tile_height = 163
+        self.tile_width = 123
         self.map = []
 
         # Generate 2d array of tiles
@@ -18,7 +18,7 @@ class World:
             self.map.append([])
             for j in range(0, self.width):
                 imageid = randint(0, 2)
-                pos = iso_from_cartesian(self.tile_height/2*(i+5), self.tile_width*(j-5))
+                pos = iso_from_cartesian(80*(i), 80*(j))
                 self.map[i].append(Tile(imageid, pos, self))
 
     def tick(self):
@@ -30,16 +30,17 @@ class Tile(pygame.sprite.Sprite):
     def __init__(self, imageid, pos, world=None):
         pygame.sprite.Sprite.__init__(self)
         self.world = world
+        randid = randint(1, 3)
         if imageid == 0:
-            filename = 'grass.png'
+            filename = 'grass%d.png' % randid
         elif imageid == 1:
-            filename = 'gravel.png'
+            filename = 'gravel%d.png' % randid
         else:
-            filename = 'water.png'
+            filename = 'water%d.png' % randid
         self.image = pygame.image.load('tiles/%s' % filename)
         self.orig_image = self.image
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(pos)
 
 def iso_from_cartesian(x, y):
-    return (x - y, (x + y)/2)
+    return ((x+250) - (y-250), ((x+250) + (y-250))/1.33)
