@@ -49,6 +49,7 @@ class GameSpace:
                     bullet = Bullet(self.player.turret_direction, self.player.rect[0], self.player.rect[1], self)
                     #CHANGE THIS ID LATER
                     bullet.id = 0
+                    
                     self.sprites.append(bullet)
                     self.player.fire_sound.play()
 

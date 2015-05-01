@@ -12,6 +12,7 @@ class Tank(pygame.sprite.Sprite):
 		self.fire_sound = pygame.mixer.Sound("audio/tank_fire.wav")
 		self.move_sound = pygame.mixer.Sound("tank_move.wav")
 		self.id = None
+		self.tile_bonus = 0 #bonus damage to be added to strength based on tile type
 
 		# Direction is initially NW, 1 is N, 2 NE, etc.
 		self.direction = 0
@@ -38,7 +39,6 @@ SW						NE
 			self.health = 75
 			self.strength = 15
 
-
 		#Load the appropriate tank and turret images
 		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
 		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.png' % self.direction)
@@ -63,9 +63,8 @@ SW						NE
 		self.gs.screen.blit(self.turret_image, self.rect)
 
 	#compares a tank tile position against that tile on the world map
+	#returns false if move is invalid
 	def check_tile(self, x_coord, y_coord):
-		#if world_map tile can't be moved to, return false
-		#else update tank properties and return true
 
 		#don't want to go outside the map
 		if x_coord < 0 or y_coord < 0:
@@ -74,13 +73,22 @@ SW						NE
 			return False
 
 		check_list = self.gs.world.map[x_coord]
-		if check_list[y_coord].type == 2:
-			return False
-		else:
-			return True  
 
-	#Need to compare the world map tile against the tile the tank will be moving to
-	#This will determine current properties of the tank or whether that tile can be moved to
+		#only the blue tank can move on water
+		if check_list[y_coord].type == 2 and self.type != "blue":
+			return False
+
+		#red and green tanks get bonuses on gravel
+		elif check_list[y_coord].type == 1 and (self.type == "green" or self.type == "red"):
+			self.tile_bonus = 5
+			return True
+
+		#grass is neutral
+		elif check_list[y_coord].type == 0:
+			self.tile_bonus = 0
+			return True
+
+	#movement function
 	def move(self, orientation):
 		if orientation == 'forward':
 			if self.direction == 0:
@@ -174,12 +182,12 @@ SW						NE
 		#straight right
 		elif dx > 0 and dy == 0:
 			x = self.curr_tile[0] + 1
-			y = self.curr_tile[1] + 1
+			y = self.curr_tile[1] - 1
 
 		#straight left
 		elif dx < 0 and dy == 0:
 			x = self.curr_tile[0] - 1
-			y = self.curr_tile[1] - 1
+			y = self.curr_tile[1] + 1
 
 		#straight down
 		elif dx == 0 and dy > 0:
