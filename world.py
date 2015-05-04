@@ -1,5 +1,5 @@
-# David Wu, 4/23/15, CSE 30332
-
+# David Wu, Spencer King, 4/23/15, CSE 30332
+# With help from http://gamedevelopment.tutsplus.com/tutorials/creating-isometric-worlds-a-primer-for-game-developers--gamedev-6511
 import pygame
 from pygame.locals import *
 from random import randint

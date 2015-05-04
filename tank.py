@@ -83,9 +83,14 @@ SW						NE
 			self.tile_bonus = 5
 			return True
 
+		#grass is neutral
+		elif check_list[y_coord].type == 0:
+			self.tile_bonus = 0
+			return True
+
 	#Need to compare the world map tile against the tile the tank will be moving to
 	#This will determine current properties of the tank or whether that tile can be moved to
-	def move(self, orientation, world_map):
+	def move(self, orientation):
 		dx = 0
 		dy = 0
 		if self.direction == 0:
@@ -112,11 +117,6 @@ SW						NE
 		elif self.direction == 7:
 			dx = -80
 			dy = -60
-
-		#grass is neutral
-		elif check_list[y_coord].type == 0:
-			self.tile_bonus = 0
-			return True
 
 		if orientation == 'backward':
 			dx = -dx
@@ -167,12 +167,17 @@ SW						NE
 		if self.check_tile(x, y):
 			self.curr_tile = (x, y)
 			self.rect = self.rect.move(dx, dy)
-			# Damn animation doesn't work
-			# print dx/100.0
-			# for i in range(100):
-			# 	self.rect = self.rect.move(dx/100.0,dy/100.0)
-			# 	self.gs.screen.blit(self.tank_image, self.rect)
-			# 	self.gs.screen.blit(self.turret_image, self.rect)
+			# Animation doesn't work
+			# Based on https://www.pygame.org/docs/tut/MoveIt.html
+			'''
+			print dx/100.0
+			for i in range(100):
+				mov_x = dx/100
+				mov_y = dy/100
+			 	self.rect = self.rect.move(mov_x,mov_y)
+			 	self.gs.screen.blit(self.tank_image, self.rect)
+			 	self.gs.screen.blit(self.turret_image, self.rect)
+			 '''
 
 	# GameSpace instance creates and manages the bullet object
 	def fire(self):
