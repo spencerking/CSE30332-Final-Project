@@ -11,6 +11,8 @@ class Tank(pygame.sprite.Sprite):
 		self.type = type
 		self.fire_sound = pygame.mixer.Sound("audio/tank_fire.wav")
 		self.move_sound = pygame.mixer.Sound("tank_move.wav")
+		self.id = None
+		self.tile_bonus = 0 #bonus damage to be added to strength based on tile type
 
 		# Direction is initially NW, 1 is N, 2 NE, etc.
 		self.direction = 0
@@ -37,7 +39,6 @@ SW						NE
 			self.health = 75
 			self.strength = 15
 
-
 		#Load the appropriate tank and turret images
 		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
 		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.png' % self.direction)
@@ -62,18 +63,25 @@ SW						NE
 		self.gs.screen.blit(self.turret_image, self.rect)
 
 	#compares a tank tile position against that tile on the world map
-	def check_tile(self, world_map, x_coord, y_coord):
-		#if world_map tile can't be moved to, return false
-		#else update tank properties and return true
-		check_list = world_map[x_coord]
-		print "check tiles"
-		print check_list[y_coord].type
-		if check_list[y_coord].type == 2:
-			print "water"
+	#returns false if move is invalid
+	def check_tile(self, x_coord, y_coord):
+
+		#don't want to go outside the map
+		if x_coord < 0 or y_coord < 0:
 			return False
-		else:
-			print "true"
-			return True  
+		elif x_coord > 6 or y_coord > 6:
+			return False
+
+		check_list = self.gs.world.map[x_coord]
+
+		#only the blue tank can move on water
+		if check_list[y_coord].type == 2 and self.type != "blue":
+			return False
+
+		#red and green tanks get bonuses on gravel
+		elif check_list[y_coord].type == 1 and (self.type == "green" or self.type == "red"):
+			self.tile_bonus = 5
+			return True
 
 	#Need to compare the world map tile against the tile the tank will be moving to
 	#This will determine current properties of the tank or whether that tile can be moved to
@@ -105,27 +113,58 @@ SW						NE
 			dx = -80
 			dy = -60
 
+		#grass is neutral
+		elif check_list[y_coord].type == 0:
+			self.tile_bonus = 0
+			return True
+
 		if orientation == 'backward':
 			dx = -dx
 			dy = -dy
 
 		#Calculate the new tile for the tank
-		if dx > 0:
-			x = self.curr_tile[0] + 1
-		elif dx < 0:
-			x = self.curr_tile[0] - 1
-		else:
-			x  = self.curr_tile[0]
 
-		if dy > 0:
-			y = self.curr_tile[1] + 1
-		elif dy < 0:
-			y = self.curr_tile[1] - 1
-		else:
+		#down right diagonal 
+		if dx > 0 and dy > 0:
+			x = self.curr_tile[0] + 1
 			y = self.curr_tile[1]
 
-		print dx/100.0
-		if self.check_tile(world_map, x, y):
+		#up left diagonal
+		elif dx < 0 and dy < 0:
+			x = self.curr_tile[0] - 1
+			y = self.curr_tile[1]
+
+		#up right diagonal 
+		elif dx > 0 and dy < 0:
+			x = self.curr_tile[0]
+			y = self.curr_tile[1] - 1
+
+		#down left diagonal 
+		elif dx < 0 and dy > 0:
+			x = self.curr_tile[0]
+			y = self.curr_tile[1] + 1
+
+		#straight right
+		elif dx > 0 and dy == 0:
+			x = self.curr_tile[0] + 1
+			y = self.curr_tile[1] - 1
+
+		#straight left
+		elif dx < 0 and dy == 0:
+			x = self.curr_tile[0] - 1
+			y = self.curr_tile[1] + 1
+
+		#straight down
+		elif dx == 0 and dy > 0:
+			x = self.curr_tile[0] + 1
+			y = self.curr_tile[1] + 1
+
+		#straight up
+		elif dx == 0 and dy < 0:
+			x = self.curr_tile[0] - 1
+			y = self.curr_tile[1] - 1
+
+		if self.check_tile(x, y):
 			self.curr_tile = (x, y)
 			self.rect = self.rect.move(dx, dy)
 			# Damn animation doesn't work
@@ -139,13 +178,13 @@ SW						NE
 	def fire(self):
 		self.fire_sound.play()
 
-	def key_handler(self, keycode, world_map):
+	def key_handler(self, keycode):
 		# 8 directions
 		# up and down move forward and back, right and left change direction
 		if keycode == K_DOWN:
-			self.move('backward', world_map)
+			self.move('backward')
 		elif keycode == K_UP:
-			self.move('forward', world_map)
+			self.move('forward')
 		elif keycode == K_RIGHT:
 			self.direction += 1
 			if self.direction > 7:
@@ -168,6 +207,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.direction = direction
 		self.dx = 0
 		self.dy = 0
+		self.id = None
 
 		if self.direction == 0:
 			self.dy = 5
