@@ -3,8 +3,6 @@
 import sys
 import pygame
 from pygame.locals import *
-from twisted.internet.protocol import Factory, Protocol
-from twisted.internet import reactor
 from world import World
 from tank import Tank, Bullet
 from player import Player

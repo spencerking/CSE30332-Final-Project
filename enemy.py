@@ -1,4 +1,4 @@
-# Tank subclass for networked player
+# Tank subclass for other (networked) player
 
 from tank import Tank
 
