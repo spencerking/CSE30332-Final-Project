@@ -9,8 +9,8 @@ class Tank(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
 		self.type = type
-		self.fire_sound = pygame.mixer.Sound("audio/tank_fire.wav")
-		self.move_sound = pygame.mixer.Sound("tank_move.wav")
+		self.fire_sound = pygame.mixer.Sound('audio/tank_fire.wav')
+		self.move_sound = pygame.mixer.Sound('tank_move.wav')
 		self.id = None
 		self.tile_bonus = 0 #bonus damage to be added to strength based on tile type
 
@@ -75,11 +75,11 @@ SW						NE
 		check_list = self.gs.world.map[x_coord]
 
 		#only the blue tank can move on water
-		if check_list[y_coord].type == 2 and self.type != "blue":
+		if check_list[y_coord].type == 2 and self.type != 'blue':
 			return False
 
 		#red and green tanks get bonuses on gravel
-		elif check_list[y_coord].type == 1 and (self.type == "green" or self.type == "red"):
+		elif check_list[y_coord].type == 1 and (self.type == 'green' or self.type == 'red'):
 			self.tile_bonus = 5
 			return True
 
@@ -177,7 +177,7 @@ SW						NE
 			 	self.rect = self.rect.move(mov_x,mov_y)
 			 	self.gs.screen.blit(self.tank_image, self.rect)
 			 	self.gs.screen.blit(self.turret_image, self.rect)
-			 '''
+			'''
 
 	# GameSpace instance creates and manages the bullet object
 	def fire(self):
@@ -185,7 +185,7 @@ SW						NE
 
 	def key_handler(self, keycode):
 		# 8 directions
-		# up and down move forward and back, right and left change direction
+		# Up and down move forward and back, right and left change direction
 		if keycode == K_DOWN:
 			self.move('backward')
 		elif keycode == K_UP:
