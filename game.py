@@ -32,7 +32,7 @@ class GameSpace:
         while Tank.check_tile(self, pos_x, pos_y) is False:
             pos_x = randint(0,6)
             pos_y = randint(0,6)
-        
+
         self.player = Player(tankType, (pos_x, pos_y), self)
         self.sprites.append(self.player)
         self.player.id = uid
@@ -66,7 +66,8 @@ class GameSpace:
 
                     bullet = Bullet(self.player, self)
                     bullet.id = self.player.id
-                    
+                    bullet.damage = self.player.strength + self.player.tile_bonus
+
                     self.sprites.append(bullet)
                     self.player.fire_sound.play()
 
@@ -76,13 +77,15 @@ class GameSpace:
             self.screen.fill(self.black)
 
             # Collision detection
-            # TODO: MAKE SURE TO ACCOUNT FOR TILE DAMAGE MODIFIERS
+            # TODO: MAKE SURE TO SEND DAMAGE 
             for s in self.sprites:
                 s.tick()
                 if isinstance(s, Bullet):
                     if s.rect.colliderect(self.player.rect) and s.id != self.player.id:
+                        self.player.health -= s.damage
                         self.sprites.remove(s)
                     if s.rect.colliderect(self.enemy.rect) and s.id != self.enemy.id:
+                        self.enemy.health -= s.damage
                         self.sprites.remove(s)
 
             pygame.display.flip()

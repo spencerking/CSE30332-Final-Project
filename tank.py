@@ -24,7 +24,7 @@ class Tank(pygame.sprite.Sprite):
 #
 #
 #		S				E
-#				SE				
+#				SE
 
 		# Initialize based on tank type
 		if self.type == 'green':
@@ -142,15 +142,15 @@ class Tank(pygame.sprite.Sprite):
 			self.rect = self.rect.move(dx, dy)
 			# Animation doesn't work
 			# Based on https://www.pygame.org/docs/tut/MoveIt.html
-			'''
-			print dx/100.0
-			for i in range(100):
-				mov_x = dx/100
-				mov_y = dy/100
-			 	self.rect = self.rect.move(mov_x,mov_y)
-			 	self.gs.screen.blit(self.tank_image, self.rect)
-			 	self.gs.screen.blit(self.turret_image, self.rect)
-			'''
+
+			# print dx/100.0
+			# for i in range(100):
+			# 	mov_x = dx/100
+			# 	mov_y = dy/100
+			#  	self.rect = self.rect.move(mov_x,mov_y)
+			#  	self.gs.screen.blit(self.tank_image, self.rect)
+			#  	self.gs.screen.blit(self.turret_image, self.rect)
+
 
 	# GameSpace instance creates and manages the bullet object
 	def key_handler(self, keycode):
@@ -180,6 +180,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.direction = firing_tank.direction
 		self.dx = 0
 		self.dy = 0
+		self.damage = None
 		self.id = None
 
 		if self.direction == 0:
