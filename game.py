@@ -59,7 +59,7 @@ class GameSpace:
                     self.player.key_handler(event.key)
 
                     # Send key event to other player
-                    self.client.transport.write('MOVE' + event.key)
+                    self.client.transport.write('MOV' + event.key)
 
                 if event.type == MOUSEBUTTONDOWN:
                     self.fire(self.player)
@@ -71,7 +71,7 @@ class GameSpace:
                     self.player.fire_sound.play()
 
                     # Send mouse event to other player
-                    self.client.transport.write('FIRE' + self.player.turret_direction)
+                    self.client.transport.write('FIR' + self.player.turret_direction)
 
             self.screen.fill(self.black)
 

@@ -24,12 +24,12 @@ class ClientConnFactory(ClientFactory):
 class ClientConnProtocol(Protocol):
     def dataReceived(self, data):
         if data == 'POS':
-            self.gs.initEnemy(data)
-        elif data == 'MOVE':
+            self.gs.initEnemy(__position__)
+        elif data == 'MOV':
             self.gs.enemy.key_handler(__keycode__)
-        elif data == 'FIRE':
+        elif data == 'FIR':
             self.gs.fire(self.gs.enemy)
-        elif data == 'TURRET':
+        elif data == 'TUR':
             self.gs.enemy.turret_direction = __turret_direction__
 
 if __name__ == '__main__':

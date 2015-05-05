@@ -20,22 +20,18 @@ class ClientConnFactory(Factory):
         self.server = server
 
     def buildProtocol(self, addr):
-        newConn = ClientConnProtocol(self)
+        newConn = ClientConnProtocol(self, len(self.server.connections)+1)
         self.server.connections.append(newConn)
         return newConn
 
 class ClientConnProtocol(Protocol):
-    def __init__(self, factory):
+    def __init__(self, factory, conn_id):
         self.factory = factory
-
-    def connectionMade(self):
-
-
-    def connectionLost(self, reason):
-        self.factory.server.connections
+        self.conn_id = conn_id
 
     def dataReceived(self, data):
-
+        # Get data from client and send it to other client
+        self.factory.server.connections[self.conn_id-1].transport.write(data)
     
 if __name__ == '__main__':
     server = Server()
