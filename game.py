@@ -31,7 +31,7 @@ class GameSpace:
         pos_y = randint(0,6)
         while Tank.check_tile(self, pos_x, pos_y) is False:
             pos_x = randint(0,6)
-            pos_y = randint(0,6)         
+            pos_y = randint(0,6)
         
         self.player = Player(tankType, (pos_x, pos_y), self)
         self.sprites.append(self.player)
@@ -39,7 +39,8 @@ class GameSpace:
         self.player.id = uid
 
     def main(self):
-        # Get other player's info
+        # Tell server this player's starting position
+        self.client.transport.write('POS' + self.player.curr_tile)
 
         # Run
         while 1:
@@ -51,8 +52,10 @@ class GameSpace:
                     sys.exit()
                 if event.type == KEYDOWN:
                     self.player.key_handler(event.key)
+
                     # TODO: send key event to other player
-                    self.client.transport.write(self.player.direction)
+                    self.client.transport.write('MOVE' + self.player.direction)
+
                 if event.type == MOUSEBUTTONDOWN:
                     bullet = Bullet(self.player.turret_direction, self.player.rect[0], self.player.rect[1], self)
                     bullet.id = self.player.id
@@ -61,7 +64,7 @@ class GameSpace:
                     self.player.fire_sound.play()
 
                     # TODO: send mouse event to other player
-                    self.client.transport.write('FIRE')
+                    self.client.transport.write('FIRE' + self.player.turret_direction)
 
             self.screen.fill(self.black)
 

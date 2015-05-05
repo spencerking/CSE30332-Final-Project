@@ -50,8 +50,10 @@ class Tank(pygame.sprite.Sprite):
 	def tick(self):
 		# Update tank image based on current direction
 		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
-
 		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.png' % self.turret_direction)
+
+		# Send turret direction to other player
+		self.gs.client.transport.write('TURRET' + self.turret_direction)
 
 		# Draw tank and turret
 		self.gs.screen.blit(self.tank_image, self.rect)
