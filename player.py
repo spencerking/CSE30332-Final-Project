@@ -29,4 +29,7 @@ class Player(Tank):
         else:
             self.turret_direction = 0
 
+        # Send turret direction to other player
+        self.gs.client.transport.write('TURRET' + self.turret_direction)
+
         super(Player, self).tick()

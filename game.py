@@ -35,8 +35,13 @@ class GameSpace:
         
         self.player = Player(tankType, (pos_x, pos_y), self)
         self.sprites.append(self.player)
-        
         self.player.id = uid
+
+    def initEnemy(self, data):
+        self.enemy = Enemy(data[])
+
+    def fire(self, firing_tank):
+        bullet = Bullet(firing_tank, self)
 
     def main(self):
         # Tell server this player's starting position
@@ -54,10 +59,12 @@ class GameSpace:
                     self.player.key_handler(event.key)
 
                     # TODO: send key event to other player
-                    self.client.transport.write('MOVE' + self.player.direction)
+                    self.client.transport.write('MOVE' + event.key)
 
                 if event.type == MOUSEBUTTONDOWN:
-                    bullet = Bullet(self.player.turret_direction, self.player.rect[0], self.player.rect[1], self)
+                    self.fire(self.player)
+
+                    bullet = Bullet(self.player, self)
                     bullet.id = self.player.id
                     
                     self.sprites.append(bullet)

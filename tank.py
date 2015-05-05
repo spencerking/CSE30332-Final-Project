@@ -52,9 +52,6 @@ class Tank(pygame.sprite.Sprite):
 		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
 		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.png' % self.turret_direction)
 
-		# Send turret direction to other player
-		self.gs.client.transport.write('TURRET' + self.turret_direction)
-
 		# Draw tank and turret
 		self.gs.screen.blit(self.tank_image, self.rect)
 		self.gs.screen.blit(self.turret_image, self.rect)
@@ -179,13 +176,13 @@ class Tank(pygame.sprite.Sprite):
 		return
 
 class Bullet(pygame.sprite.Sprite):
-	def __init__(self, direction, x, y, gs=None):
+	def __init__(self, firing_tank, gs=None):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
 		self.image = pygame.image.load('tank/laser.png')
 		self.rect = self.image.get_rect()
-		self.rect = self.rect.move(self.gs.player.rect.center)
-		self.direction = direction
+		self.rect = self.rect.move(firing_tank.rect.center)
+		self.direction = firing_tank.direction
 		self.dx = 0
 		self.dy = 0
 		self.id = None

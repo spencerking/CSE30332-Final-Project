@@ -22,12 +22,19 @@ class ClientConnFactory(ClientFactory):
         return CommandConnProtocol()
 
 class ClientConnProtocol(Protocol):
-    def connectionMade(self):
-
-
     def dataReceived(self, data):
-
+        if data == 'POS':
+            self.gs.initEnemy(data)
+        elif data == 'MOVE':
+            self.gs.enemy.key_handler(__keycode__)
+        elif data == 'FIRE':
+            self.gs.enemy.key
+        elif data == 'TURRET':
+            self.gs.fire(self.gs.enemy)
 
 if __name__ == '__main__':
+    if len(sys.argv) != 4:
+        print 'Usage: $ python client.py <address> <port> <tank type>'
+        sys.exit()
     client = Client(sys.argv)
     client.run()
