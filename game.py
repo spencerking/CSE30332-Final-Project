@@ -4,13 +4,13 @@ import sys
 import pygame
 from pygame.locals import *
 from world import World
-from tank import Bullet
+from tank import Tank, Bullet
 from player import Player
 from enemy import Enemy
 from client import Client
 
 class GameSpace:
-    def __init__(self, client, player, enemy):
+    def __init__(self, client, uid, tankType):
         self.client = client
 
         pygame.init()
@@ -25,17 +25,23 @@ class GameSpace:
 
         self.world = World(7, 7, self)
         self.sprites.append(self.world)
-        # TODO: check if tank location is not water
-        self.player = Player(player['type'], player['pos'], self)
-        self.sprites.append(self.player)
-        self.enemy = Enemy(enemy['type'], enemy['pos'], self)
-        self.sprites.append(self.enemy)
 
-        #CHANGE LATER
-        self.player.id = 0
-        self.enemy.id = 1
+        # Randomly position tanks and make sure the position is valid
+        pos_x = randint(0,6)
+        pos_y = randint(0,6)
+        while Tank.check_tile(self, pos_x, pos_y) is False:
+            pos_x = randint(0,6)
+            pos_y = randint(0,6)         
+        
+        self.player = Player(tankType, (pos_x, pos_y), self)
+        self.sprites.append(self.player)
+        
+        self.player.id = uid
 
     def main(self):
+        # Get other player's info
+
+        # Run
         while 1:
             self.clock.tick(60)
 
@@ -46,11 +52,10 @@ class GameSpace:
                 if event.type == KEYDOWN:
                     self.player.key_handler(event.key)
                     # TODO: send key event to other player
-                    self.client.transport.write('MOVE' + self.player.direction)
+                    self.client.transport.write(self.player.direction)
                 if event.type == MOUSEBUTTONDOWN:
                     bullet = Bullet(self.player.turret_direction, self.player.rect[0], self.player.rect[1], self)
-                    # CHANGE THIS ID LATER
-                    bullet.id = 0
+                    bullet.id = self.player.id
                     
                     self.sprites.append(bullet)
                     self.player.fire_sound.play()
@@ -68,6 +73,5 @@ class GameSpace:
                         self.sprites.remove(s)
                     if s.rect.colliderect(self.enemy.rect) and s.id != self.enemy.id:
                         self.sprites.remove(s)
-
 
             pygame.display.flip()
