@@ -68,7 +68,8 @@ class GameSpace:
 
             self.screen.fill(self.black)
 
-            # Collision detection
+            #collision detection
+            #TODO: MAKE SURE TO ACCOUNT FOR TILE DAMAGE MODIFIERS
             for s in self.sprites:
                 s.tick()
                 if isinstance(s, Bullet):
