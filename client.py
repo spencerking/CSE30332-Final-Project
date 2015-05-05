@@ -28,9 +28,9 @@ class ClientConnProtocol(Protocol):
         elif data == 'MOVE':
             self.gs.enemy.key_handler(__keycode__)
         elif data == 'FIRE':
-            self.gs.enemy.key
-        elif data == 'TURRET':
             self.gs.fire(self.gs.enemy)
+        elif data == 'TURRET':
+            self.gs.enemy.turret_direction = __turret_direction__
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:

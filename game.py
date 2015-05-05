@@ -58,7 +58,7 @@ class GameSpace:
                 if event.type == KEYDOWN:
                     self.player.key_handler(event.key)
 
-                    # TODO: send key event to other player
+                    # Send key event to other player
                     self.client.transport.write('MOVE' + event.key)
 
                 if event.type == MOUSEBUTTONDOWN:
@@ -70,7 +70,7 @@ class GameSpace:
                     self.sprites.append(bullet)
                     self.player.fire_sound.play()
 
-                    # TODO: send mouse event to other player
+                    # Send mouse event to other player
                     self.client.transport.write('FIRE' + self.player.turret_direction)
 
             self.screen.fill(self.black)

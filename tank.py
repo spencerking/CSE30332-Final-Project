@@ -153,9 +153,6 @@ class Tank(pygame.sprite.Sprite):
 			'''
 
 	# GameSpace instance creates and manages the bullet object
-	def fire(self):
-		self.fire_sound.play()
-
 	def key_handler(self, keycode):
 		# 8 directions
 		# Up and down move forward and back, right and left change direction
@@ -171,8 +168,6 @@ class Tank(pygame.sprite.Sprite):
 			self.direction -= 1
 			if self.direction < 0:
 				self.direction = 7
-		elif keycode == K_SPACE:
-			self.fire()
 		return
 
 class Bullet(pygame.sprite.Sprite):
