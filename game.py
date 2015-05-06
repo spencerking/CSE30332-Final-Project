@@ -29,7 +29,7 @@ class GameSpace:
         # Randomly position tanks and make sure the position is valid
         pos_x = randint(0,6)
         pos_y = randint(0,6)
-        while Tank.check_tile(self, pos_x, pos_y) is False:
+        while Tank.check_blue(self, pos_x, pos_y) is False:
             pos_x = randint(0,6)
             pos_y = randint(0,6)
 
@@ -77,7 +77,7 @@ class GameSpace:
             self.screen.fill(self.black)
 
             # Collision detection
-            # TODO: MAKE SURE TO SEND DAMAGE 
+            # TODO: MAKE SURE TO SEND DAMAGE
             for s in self.sprites:
                 s.tick()
                 if isinstance(s, Bullet):

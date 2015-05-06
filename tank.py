@@ -60,7 +60,6 @@ class Tank(pygame.sprite.Sprite):
 	Compares a tank tile position against that tile on the world map
 	Returns false if move is invalid
 	'''
-	@classmethod
 	def check_tile(gs, pos_x, pos_y):
 		# Don't want to go outside the map
 		if pos_x < 0 or pos_y < 0:
@@ -83,6 +82,12 @@ class Tank(pygame.sprite.Sprite):
 		elif check_list[pos_y].type == 0:
 			self.tile_bonus = 0
 			return True
+
+	# don't want to start any tanks on a water tile
+	@classmethod
+	def check_blue(gs, pos_x, pos_y):
+		if check_list[pos_y].type == 2:
+			return False
 
 	'''
 	Need to compare the world map tile against the tile the tank will be moving to
@@ -152,7 +157,6 @@ class Tank(pygame.sprite.Sprite):
 			#  	self.gs.screen.blit(self.turret_image, self.rect)
 
 
-	# GameSpace instance creates and manages the bullet object
 	def key_handler(self, keycode):
 		# 8 directions
 		# Up and down move forward and back, right and left change direction
@@ -170,6 +174,7 @@ class Tank(pygame.sprite.Sprite):
 				self.direction = 7
 		return
 
+# GameSpace instance creates and manages the bullet object
 class Bullet(pygame.sprite.Sprite):
 	def __init__(self, firing_tank, gs=None):
 		pygame.sprite.Sprite.__init__(self)
