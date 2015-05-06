@@ -20,9 +20,9 @@ class Server():
 
     def getValidStartPos(self):
         row = self.map[randint(0, self.map_height)]
-        tile = row[randint(0, self.map_width)]
+        tile = row[randint(0, self.map_width-1)]
         while tile == 2 and (row, tile) not in self.occupied_pos:
-            row = self.map[randint(0, self.map_height)]
+            row = self.map[randint(0, self.map_height-1)]
             tile = row[randint(0, self.map_width)]
         self.occupied_pos.append((row, tile))
         return (row, tile)
@@ -51,9 +51,10 @@ class ClientConnProtocol(Protocol):
         print 'Client %d joined' % self.conn_id
         # Give the client the tile list
         map_str = ''
-        for i in self.server.map:
-            for j in self.server.map[i]:
-                map_str += str(j)+','
+        for i in range(0, len(self.server.map)):
+            row = self.server.map[i]
+            for j in range(0, len(row)):
+                map_str += str(row[j])+','
         map_str = map_str[1:len(map_str)-1]
         size_str = str(self.server.map_width) +','+ str(self.server.map_height)
         self.transport.write('MAP,' + size_str +','+ map_str)
@@ -61,12 +62,10 @@ class ClientConnProtocol(Protocol):
         pos = self.server.getValidStartPos()
         self.transport.write('POS1,' + str(pos[0]) +','+ str(pos[1]))
 
-    def connectionLost(self):
+    def connectionLost(self, reason):
         print 'Client %d left' % self.conn_id
         # Tell other client that this client left
         self.server.connections[self.conn_id-1].transport.write('QUIT')
-
-        # TODO: Quit cleanly
 
     def dataReceived(self, data):
         # Get data from client and send it to other client

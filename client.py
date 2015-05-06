@@ -10,11 +10,11 @@ class Client():
         self.serverPort = int(args[2])
         self.factory = ClientConnFactory(self)
         self.gs = GameSpace(self, args[3])
+        reactor.connectTCP(self.serverAddress, self.serverPort, self.factory)
 
     def run(self):
         gameLoop = LoopingCall(self.gs.main)
         gameLoop.start(1.0/60)
-        reactor.connectTCP(self.serverAddress, self.serverPort, self.factory)
         reactor.run()
 
 class ClientConnFactory(ClientFactory):
@@ -48,7 +48,7 @@ class ClientConnProtocol(Protocol):
         elif tokens[0] == 'TURR':
             self.gs.enemy.turret_direction = int(tokens[1]) # turret direction
         elif tokens[0] == 'QUIT':
-            print 'Other client left'
+            print 'The other player left'
             # TODO: cleanly exit
 
 if __name__ == '__main__':
