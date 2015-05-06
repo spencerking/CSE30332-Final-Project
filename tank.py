@@ -24,7 +24,7 @@ class Tank(pygame.sprite.Sprite):
 #
 #
 #		S				E
-#				SE				
+#				SE
 
 		# Initialize based on tank type
 		if self.tankType == 'green':
@@ -60,8 +60,12 @@ class Tank(pygame.sprite.Sprite):
 	Compares a tank tile position against that tile on the world map
 	Returns false if move is invalid
 	'''
+<<<<<<< HEAD
 	@staticmethod
 	def valid_tile(gs, tankType, pos_x, pos_y):
+=======
+	def check_tile(gs, pos_x, pos_y):
+>>>>>>> 61f63ee6e6f277c3ee5d75a985313abb35ba79e4
 		# Don't want to go outside the map
 		if pos_x < 0 or pos_y < 0:
 			return -1
@@ -81,6 +85,12 @@ class Tank(pygame.sprite.Sprite):
 		# Grass is neutral
 		elif check_list[pos_y].type == 0:
 			return 0
+
+	# Don't want to start any tanks on a water tile
+	@staticmethod
+	def check_blue(gs, pos_x, pos_y):
+		if check_list[pos_y].type == 2:
+			return False
 
 	'''
 	Need to compare the world map tile against the tile the tank will be moving to
@@ -149,7 +159,11 @@ class Tank(pygame.sprite.Sprite):
 			#  	self.gs.screen.blit(self.tank_image, self.rect)
 			#  	self.gs.screen.blit(self.turret_image, self.rect)
 
+<<<<<<< HEAD
 	# GameSpace instance creates and manages the bullet object
+=======
+
+>>>>>>> 61f63ee6e6f277c3ee5d75a985313abb35ba79e4
 	def key_handler(self, keycode):
 		# 8 directions
 		# Up and down move forward and back, right and left change direction
@@ -167,6 +181,7 @@ class Tank(pygame.sprite.Sprite):
 				self.direction = 7
 		return
 
+# GameSpace instance creates and manages the bullet object
 class Bullet(pygame.sprite.Sprite):
 	def __init__(self, firing_tank, gs=None):
 		pygame.sprite.Sprite.__init__(self)
@@ -177,6 +192,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.direction = firing_tank.direction
 		self.dx = 0
 		self.dy = 0
+		self.damage = None
 		self.id = None
 
 		if self.direction == 0:
