@@ -2,7 +2,7 @@
 
 import pygame
 from pygame.locals import *
-import World # iso_from_cartesian
+from world import World # iso_from_cartesian
 
 class Tank(pygame.sprite.Sprite):
 	def __init__(self, tanktype, pos, gs):
@@ -10,7 +10,8 @@ class Tank(pygame.sprite.Sprite):
 		self.gs = gs
 		self.tank_type = tanktype
 		self.fire_sound = pygame.mixer.Sound('audio/tank_fire.wav')
-		self.move_sound = pygame.mixer.Sound('tank_move.wav')
+		self.move_sound = pygame.mixer.Sound('audio/tank_move.wav')
+		self.curr_tile = pos
 		self.tile_bonus = 0 # Bonus damage based on the current tile
 
 		# Direction is initially NW, 1 is N, 2 NE, etc.
@@ -40,9 +41,6 @@ class Tank(pygame.sprite.Sprite):
 		self.turret_image = pygame.image.load('tank/'+self.tank_type+'/turret%d.png' % self.direction)
 		self.rect = self.tank_image.get_rect()
 
-		# Stores which tile the tank is currently on, updates as the tank moves
-		self.curr_tile = pos
-
 		displayed_pos = World.iso_from_cartesian(pos[0]*80-8, pos[1]*80-8)
 		self.rect = self.rect.move(displayed_pos)
 
@@ -54,13 +52,6 @@ class Tank(pygame.sprite.Sprite):
 		# Draw tank and turret
 		self.gs.screen.blit(self.tank_image, self.rect)
 		self.gs.screen.blit(self.turret_image, self.rect)
-
-	# Don't want to start any tanks on a water tile
-	@staticmethod
-	def check_blue(gs, pos_x, pos_y):
-		check_list = gs.world.map[pos_x]
-		if check_list[pos_y].type == 2:
-			return False
 
 	'''
 	Need to compare the world map tile against the tile the tank will be moving to
@@ -151,9 +142,10 @@ class Tank(pygame.sprite.Sprite):
 
 # GameSpace instance creates and manages the bullet object
 class Bullet(pygame.sprite.Sprite):
-	def __init__(self, firing_tank, gs=None):
+	def __init__(self, firing_tank, gs):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
+		self.owner = firing_tank
 		self.image = pygame.image.load('tank/laser.png')
 		self.rect = self.image.get_rect()
 		self.rect = self.rect.move(firing_tank.rect.center)

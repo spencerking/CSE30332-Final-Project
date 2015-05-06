@@ -23,9 +23,6 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
-        # Tell server this player's starting position
-        self.client.connection.transport.write('POS,' + self.player.curr_tile[0] +','+ self.player.curr_tile[1])
-
     def initWorld(self, size, tiles):
         self.world = World(size, tiles, self)
         self.sprites.append(self.world)
@@ -73,10 +70,10 @@ class GameSpace:
             for s in self.sprites:
                 s.tick()
                 if isinstance(s, Bullet):
-                    if s.rect.colliderect(self.player.rect) and s.id != self.player.id:
+                    if s.rect.colliderect(self.player.rect) and s.owner != self.player:
                         self.player.health -= s.damage
                         self.sprites.remove(s)
-                    if s.rect.colliderect(self.enemy.rect) and s.id != self.enemy.id:
+                    if s.rect.colliderect(self.enemy.rect) and s.owner != self.enemy:
                         self.enemy.health -= s.damage
                         self.sprites.remove(s)
 

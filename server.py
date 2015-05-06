@@ -1,3 +1,4 @@
+import sys
 from random import randint
 from twisted.internet.protocol import Factory, Protocol
 from twisted.internet import reactor
@@ -15,9 +16,16 @@ class Server():
             self.map.append([])
             for j in range(0, self.map_width):
                 self.map[i].append(randint(0,2))
+        self.occupied_pos = []
 
     def getValidStartPos(self):
-
+        row = self.map[randint(0, self.map_height)]
+        tile = row[randint(0, self.map_width)]
+        while tile == 2 and (row, tile) not in self.occupied_pos:
+            row = self.map[randint(0, self.map_height)]
+            tile = row[randint(0, self.map_width)]
+        self.occupied_pos.append((row, tile))
+        return (row, tile)
         
     def run(self):
         factory = ClientConnFactory(self)
@@ -36,30 +44,33 @@ class ClientConnFactory(Factory):
 
 class ClientConnProtocol(Protocol):
     def __init__(self, factory, conn_id):
-        self.factory = factory
+        self.server = factory.server
         self.conn_id = conn_id
 
     def connectionMade(self):
         print 'Client %d joined' % self.conn_id
         # Give the client the tile list
         map_str = ''
-        for i in self.factory.server.map:
-            for j in self.factory.server.map[i]:
+        for i in self.server.map:
+            for j in self.server.map[i]:
                 map_str += str(j)+','
         map_str = map_str[1:len(map_str)-1]
-        window_str = str(self.factory.server.map_width) +','+ str(self.factory.server.map_height)
-        self.transport.write('MAP,' + window_str +','+ map_str)
+        size_str = str(self.server.map_width) +','+ str(self.server.map_height)
+        self.transport.write('MAP,' + size_str +','+ map_str)
         # Give the client a start position
-        pos = self.factory.server.getValidStartPos()
+        pos = self.server.getValidStartPos()
         self.transport.write('POS1,' + str(pos[0]) +','+ str(pos[1]))
 
     def connectionLost(self):
         print 'Client %d left' % self.conn_id
+        # Tell other client that this client left
+        self.server.connections[self.conn_id-1].transport.write('QUIT')
+
         # TODO: Quit cleanly
 
     def dataReceived(self, data):
         # Get data from client and send it to other client
-        self.factory.server.connections[self.conn_id-1].transport.write(data)
+        self.server.connections[self.conn_id-1].transport.write(data)
     
 if __name__ == '__main__':
     server = Server(sys.argv)

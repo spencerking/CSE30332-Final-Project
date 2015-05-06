@@ -47,6 +47,9 @@ class ClientConnProtocol(Protocol):
             self.gs.fire(self.gs.enemy)
         elif tokens[0] == 'TURR':
             self.gs.enemy.turret_direction = int(tokens[1]) # turret direction
+        elif tokens[0] == 'QUIT':
+            print 'Other client left'
+            # TODO: cleanly exit
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
