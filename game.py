@@ -10,7 +10,7 @@ from player import Player
 from enemy import Enemy
 
 class GameSpace:
-    def __init__(self, client, uid, tankType):
+    def __init__(self, client, tankType):
         self.client = client
 
         pygame.init()
@@ -23,35 +23,26 @@ class GameSpace:
         self.clock = pygame.time.Clock()
         self.sprites = []
 
-        self.world = World(7, 7, self)
+        # Tell server this player's starting position
+        self.client.connection.transport.write('POS,' + self.player.curr_tile[0] +','+ self.player.curr_tile[1])
+
+    def initWorld(self, size, tiles):
+        self.world = World(size, tiles, self)
         self.sprites.append(self.world)
 
-        # Randomly position tanks and make sure the position is valid
-        pos_x = randint(0,6)
-        pos_y = randint(0,6)
-        while Tank.check_blue(self, pos_x, pos_y) is False:
-            pos_x = randint(0,6)
-            pos_y = randint(0,6)
-
-        self.player = Player(tankType, (pos_x, pos_y), self)
+    def initPlayer(self, position):
+        self.player = Player()
         self.sprites.append(self.player)
-        self.player.id = uid
-
-        self.startGame = False
 
     def initEnemy(self, tankType, position):
         self.enemy = Enemy(tankType, position, self)
-        self.startGame = True
+        self.sprites.append(self.world)
 
     def fire(self, firing_tank):
         bullet = Bullet(firing_tank, self)
+        self.sprites.append(bullet)
 
     def main(self):
-        # Tell server this player's starting position
-        self.client.transport.write('POS,' + self.player.curr_tile[0] +','+ self.player.curr_tile[1])
-        while not self.startGame:
-            pass
-
         # Run
         while 1:
             self.clock.tick(60)
@@ -68,10 +59,6 @@ class GameSpace:
 
                 if event.type == MOUSEBUTTONDOWN:
                     self.fire(self.player)
-
-                    bullet = Bullet(self.player, self)
-                    bullet.id = self.player.id
-                    bullet.damage = self.player.strength + self.player.tile_bonus
 
                     self.sprites.append(bullet)
                     self.player.fire_sound.play()

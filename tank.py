@@ -1,86 +1,59 @@
-# Spencer King, David Wu, 4/23/15, CSE 40332
+# Spencer King, David Wu, 4/23/15, CSE 30332
 
 import pygame
 from pygame.locals import *
-from world import iso_from_cartesian
+import World # iso_from_cartesian
 
 class Tank(pygame.sprite.Sprite):
-	def __init__(self, tankType, pos, gs=None):
+	def __init__(self, tanktype, pos, gs):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
-		self.tankType = tankType
+		self.tank_type = tanktype
 		self.fire_sound = pygame.mixer.Sound('audio/tank_fire.wav')
 		self.move_sound = pygame.mixer.Sound('tank_move.wav')
-		self.id = None
-		self.tile_bonus = 0 # Bonus damage to be added to strength based on tile type
+		self.tile_bonus = 0 # Bonus damage based on the current tile
 
 		# Direction is initially NW, 1 is N, 2 NE, etc.
 		self.direction = 0
-#				NW
-#		W				N
-#
-#
-#	SW						NE
-#
-#
-#		S				E
-#				SE
+		#				NW
+		#		W				N
+		#
+		#
+		#	SW						NE
+		#
+		#
+		#		S				E
+		#				SE
 
 		# Initialize based on tank type
-		if self.tankType == 'green':
+		if self.tank_type == 'green':
 			self.health = 140
 			self.strength = 5
-		elif self.tankType == 'blue':
+		elif self.tank_type == 'blue':
 			self.health = 100
 			self.strength = 10
-		elif self.tankType == 'red':
+		elif self.tank_type == 'red':
 			self.health = 75
 			self.strength = 15
 
-		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
-		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.png' % self.direction)
+		self.tank_image = pygame.image.load('tank/'+self.tank_type+'/tank%d.png' % self.direction)
+		self.turret_image = pygame.image.load('tank/'+self.tank_type+'/turret%d.png' % self.direction)
 		self.rect = self.tank_image.get_rect()
 
 		# Stores which tile the tank is currently on, updates as the tank moves
 		self.curr_tile = pos
 
-		adj_pos = iso_from_cartesian(pos[0]*80-8, pos[1]*80-8)
-		self.rect = self.rect.move(adj_pos)
+		displayed_pos = World.iso_from_cartesian(pos[0]*80-8, pos[1]*80-8)
+		self.rect = self.rect.move(displayed_pos)
 
 	def tick(self):
 		# Update tank image based on current direction
-		self.tank_image = pygame.image.load('tank/'+self.type+'/tank%d.png' % self.direction)
-		self.turret_image = pygame.image.load('tank/'+self.type+'/turret%d.png' % self.turret_direction)
+		self.tank_image = pygame.image.load('tank/'+self.tank_type+'/tank%d.png' % self.direction)
+		self.turret_image = pygame.image.load('tank/'+self.tank_type+'/turret%d.png' % self.turret_direction)
 
 		# Draw tank and turret
 		self.gs.screen.blit(self.tank_image, self.rect)
 		self.gs.screen.blit(self.turret_image, self.rect)
-
-	'''
-	Compares a tank tile position against that tile on the world map
-	Returns false if move is invalid
-	'''
-	@staticmethod
-	def check_tile(gs, pos_x, pos_y):
-		# Don't want to go outside the map
-		if pos_x < 0 or pos_y < 0:
-			return -1
-		elif pos_x > 6 or pos_y > 6:
-			return -1
-
-		check_list = gs.world.map[pos_x]
-
-		# Only the blue tank can move on water
-		if check_list[pos_y].type == 2 and tankType != 'blue':
-			return -1
-
-		# Red and green tanks get bonuses on gravel
-		elif check_list[pos_y].type == 1 and (tankType == 'green' or tankType == 'red'):
-			return 5
-
-		# Grass is neutral
-		elif check_list[pos_y].type == 0:
-			return 0
 
 	# Don't want to start any tanks on a water tile
 	@staticmethod
@@ -142,9 +115,11 @@ class Tank(pygame.sprite.Sprite):
 			x = self.curr_tile[0] - 1
 			y = self.curr_tile[1]
 
-		if Tank.valid_tile(self.gs, self.tankType, x, y):
+		if self.gs.world.valid_tile(self.tank_type, x, y):
 			self.curr_tile = (x, y)
 			self.rect = self.rect.move(dx, dy)
+			self.tile_bonus = self.gs.world.tile_bonus(self.tank_type, x, y)
+
 			# Animation doesn't work
 			# Based on https://www.pygame.org/docs/tut/MoveIt.html
 
@@ -183,11 +158,10 @@ class Bullet(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.rect = self.rect.move(firing_tank.rect.center)
 		self.direction = firing_tank.direction
+		self.damage = firing_tank.strength + firing_tank.tile_bonus
+
 		self.dx = 0
 		self.dy = 0
-		self.damage = None
-		self.id = None
-
 		if self.direction == 0:
 			self.dy = 5
 		elif self.direction == 1:
