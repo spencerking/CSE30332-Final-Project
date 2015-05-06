@@ -19,11 +19,11 @@ class Server():
         self.occupied_pos = []
 
     def getValidStartPos(self):
-        row = self.map[randint(0, self.map_height)]
+        row = self.map[randint(0, self.map_height-1)]
         tile = row[randint(0, self.map_width-1)]
         while tile == 2 and (row, tile) not in self.occupied_pos:
             row = self.map[randint(0, self.map_height-1)]
-            tile = row[randint(0, self.map_width)]
+            tile = row[randint(0, self.map_width-1)]
         self.occupied_pos.append((row, tile))
         return (row, tile)
         
@@ -51,10 +51,9 @@ class ClientConnProtocol(Protocol):
         print 'Client %d joined' % self.conn_id
         # Give the client the tile list
         map_str = ''
-        for i in range(0, len(self.server.map)):
-            row = self.server.map[i]
-            for j in range(0, len(row)):
-                map_str += str(row[j])+','
+        for i, row in enumerate(self.server.map):
+            for j, item in enumerate(row):
+                map_str += str(item)+','
         map_str = map_str[1:len(map_str)-1]
         size_str = str(self.server.map_width) +','+ str(self.server.map_height)
         self.transport.write('MAP,' + size_str +','+ map_str)
