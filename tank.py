@@ -5,10 +5,10 @@ from pygame.locals import *
 from world import iso_from_cartesian
 
 class Tank(pygame.sprite.Sprite):
-	def __init__(self, type, pos, gs=None):
+	def __init__(self, tankType, pos, gs=None):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
-		self.type = type
+		self.tankType = tankType
 		self.fire_sound = pygame.mixer.Sound('audio/tank_fire.wav')
 		self.move_sound = pygame.mixer.Sound('tank_move.wav')
 		self.id = None
@@ -27,13 +27,13 @@ class Tank(pygame.sprite.Sprite):
 #				SE				
 
 		# Initialize based on tank type
-		if self.type == 'green':
+		if self.tankType == 'green':
 			self.health = 140
 			self.strength = 5
-		elif self.type == 'blue':
+		elif self.tankType == 'blue':
 			self.health = 100
 			self.strength = 10
-		elif self.type == 'red':
+		elif self.tankType == 'red':
 			self.health = 75
 			self.strength = 15
 
@@ -60,29 +60,27 @@ class Tank(pygame.sprite.Sprite):
 	Compares a tank tile position against that tile on the world map
 	Returns false if move is invalid
 	'''
-	@classmethod
-	def check_tile(gs, pos_x, pos_y):
+	@staticmethod
+	def valid_tile(gs, tankType, pos_x, pos_y):
 		# Don't want to go outside the map
 		if pos_x < 0 or pos_y < 0:
-			return False
+			return -1
 		elif pos_x > 6 or pos_y > 6:
-			return False
+			return -1
 
 		check_list = gs.world.map[pos_x]
 
 		# Only the blue tank can move on water
-		if check_list[pos_y].type == 2 and self.type != 'blue':
-			return False
+		if check_list[pos_y].type == 2 and tankType != 'blue':
+			return -1
 
 		# Red and green tanks get bonuses on gravel
-		elif check_list[pos_y].type == 1 and (self.type == 'green' or self.type == 'red'):
-			self.tile_bonus = 5
-			return True
+		elif check_list[pos_y].type == 1 and (tankType == 'green' or tankType == 'red'):
+			return 5
 
 		# Grass is neutral
 		elif check_list[pos_y].type == 0:
-			self.tile_bonus = 0
-			return True
+			return 0
 
 	'''
 	Need to compare the world map tile against the tile the tank will be moving to
@@ -137,20 +135,19 @@ class Tank(pygame.sprite.Sprite):
 			x = self.curr_tile[0] - 1
 			y = self.curr_tile[1]
 
-		if Tank.check_tile(self.gs, x, y):
+		if Tank.valid_tile(self.gs, self.tankType, x, y):
 			self.curr_tile = (x, y)
 			self.rect = self.rect.move(dx, dy)
 			# Animation doesn't work
 			# Based on https://www.pygame.org/docs/tut/MoveIt.html
-			'''
-			print dx/100.0
-			for i in range(100):
-				mov_x = dx/100
-				mov_y = dy/100
-			 	self.rect = self.rect.move(mov_x,mov_y)
-			 	self.gs.screen.blit(self.tank_image, self.rect)
-			 	self.gs.screen.blit(self.turret_image, self.rect)
-			'''
+
+			# print dx/100.0
+			# for i in range(100):
+			# 	mov_x = dx/100
+			# 	mov_y = dy/100
+			#  	self.rect = self.rect.move(mov_x,mov_y)
+			#  	self.gs.screen.blit(self.tank_image, self.rect)
+			#  	self.gs.screen.blit(self.turret_image, self.rect)
 
 	# GameSpace instance creates and manages the bullet object
 	def key_handler(self, keycode):

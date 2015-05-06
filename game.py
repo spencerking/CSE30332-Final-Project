@@ -1,13 +1,13 @@
 # David Wu, Spencer King, 4/23/15, CSE 30332
 
 import sys
+from random import randint
 import pygame
 from pygame.locals import *
 from world import World
 from tank import Tank, Bullet
 from player import Player
 from enemy import Enemy
-from client import Client
 
 class GameSpace:
     def __init__(self, client, uid, tankType):
@@ -29,7 +29,7 @@ class GameSpace:
         # Randomly position tanks and make sure the position is valid
         pos_x = randint(0,6)
         pos_y = randint(0,6)
-        while Tank.check_tile(self, pos_x, pos_y) is False:
+        while Tank.valid_tile(self, tankType, pos_x, pos_y) is False:
             pos_x = randint(0,6)
             pos_y = randint(0,6)
         
@@ -37,15 +37,20 @@ class GameSpace:
         self.sprites.append(self.player)
         self.player.id = uid
 
-    def initEnemy(self, data):
-        self.enemy = Enemy(data[])
+        self.startGame = False
+
+    def initEnemy(self, tankType, position):
+        self.enemy = Enemy(tankType, position, self)
+        self.startGame = True
 
     def fire(self, firing_tank):
         bullet = Bullet(firing_tank, self)
 
     def main(self):
         # Tell server this player's starting position
-        self.client.transport.write('POS' + self.player.curr_tile)
+        self.client.transport.write('POS,' + self.player.curr_tile[0] +','+ self.player.curr_tile[1])
+        while not self.startGame:
+            pass
 
         # Run
         while 1:
@@ -59,7 +64,7 @@ class GameSpace:
                     self.player.key_handler(event.key)
 
                     # Send key event to other player
-                    self.client.transport.write('MOV' + event.key)
+                    self.client.transport.write('MOV,' + event.key)
 
                 if event.type == MOUSEBUTTONDOWN:
                     self.fire(self.player)
@@ -71,7 +76,7 @@ class GameSpace:
                     self.player.fire_sound.play()
 
                     # Send mouse event to other player
-                    self.client.transport.write('FIR' + self.player.turret_direction)
+                    self.client.transport.write('FIR,' + self.player.turret_direction)
 
             self.screen.fill(self.black)
 
