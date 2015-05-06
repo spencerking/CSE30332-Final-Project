@@ -86,6 +86,7 @@ class Tank(pygame.sprite.Sprite):
 	# don't want to start any tanks on a water tile
 	@classmethod
 	def check_blue(gs, pos_x, pos_y):
+		check_list = gs.world.map[pos_x]
 		if check_list[pos_y].type == 2:
 			return False
 
