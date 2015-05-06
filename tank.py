@@ -60,12 +60,8 @@ class Tank(pygame.sprite.Sprite):
 	Compares a tank tile position against that tile on the world map
 	Returns false if move is invalid
 	'''
-<<<<<<< HEAD
 	@staticmethod
-	def valid_tile(gs, tankType, pos_x, pos_y):
-=======
 	def check_tile(gs, pos_x, pos_y):
->>>>>>> 61f63ee6e6f277c3ee5d75a985313abb35ba79e4
 		# Don't want to go outside the map
 		if pos_x < 0 or pos_y < 0:
 			return -1
@@ -160,11 +156,7 @@ class Tank(pygame.sprite.Sprite):
 			#  	self.gs.screen.blit(self.tank_image, self.rect)
 			#  	self.gs.screen.blit(self.turret_image, self.rect)
 
-<<<<<<< HEAD
 	# GameSpace instance creates and manages the bullet object
-=======
-
->>>>>>> 61f63ee6e6f277c3ee5d75a985313abb35ba79e4
 	def key_handler(self, keycode):
 		# 8 directions
 		# Up and down move forward and back, right and left change direction
