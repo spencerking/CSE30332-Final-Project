@@ -17,6 +17,8 @@ class Server():
             for j in range(0, self.map_width):
                 self.map[i].append(randint(0,2))
         self.occupied_pos = []
+        self.player1_pos = None
+        self.player2_pos = None
 
     def getValidStartPos(self):
         rowPos = randint(0, self.map_height-1)
@@ -26,7 +28,7 @@ class Server():
             rowPos = randint(0, self.map_height-1)
             row = self.map[rowPos]
             tile = row[randint(0, self.map_width-1)]
-        self.occupied_pos.append((row, tile))
+        self.occupied_pos.append((rowPos, tile))
         return (rowPos, tile)
         
     def run(self):
@@ -62,6 +64,12 @@ class ClientConnProtocol(Protocol):
         # Give the client a start position
         pos = self.server.getValidStartPos()
         self.transport.write('POS1,' + str(pos[0]) +','+ str(pos[1]) + '\r\n')
+
+        if (len(self.server.connections) == 1:
+            self.server.player1_pos = pos
+        elif (len(self.server.connections) == 2):
+            self.server.player2_pos = pos
+            self.transport.write('POS2,' + str(self.server.player1_pos[0]) +','+ str(self.server.player1_pos[1]))
 
     def connectionLost(self, reason):
         print 'Client %d left' % self.conn_id
