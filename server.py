@@ -65,11 +65,11 @@ class ClientConnProtocol(Protocol):
         pos = self.server.getValidStartPos()
         self.transport.write('POS1,' + str(pos[0]) +','+ str(pos[1]) + '\r\n')
 
-        if (len(self.server.connections) == 1:
+        if len(self.server.connections) == 1:
             self.server.player1_pos = pos
-        elif (len(self.server.connections) == 2):
+        elif len(self.server.connections) == 2:
             self.server.player2_pos = pos
-            self.transport.write('POS2,' + str(self.server.player1_pos[0]) +','+ str(self.server.player1_pos[1]))
+            self.transport.write('POS2,' + str(self.server.player1_pos[0]) +','+ str(self.server.player1_pos[1]) + '\r\n')
 
     def connectionLost(self, reason):
         print 'Client %d left' % self.conn_id
