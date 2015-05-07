@@ -1,24 +1,20 @@
 import sys
 from random import randint
-from twisted.internet.protocol import Factory, Protocol
+from twisted.internet.protocol import Factory
+from twisted.protocols.basic import LineReceiver
 from twisted.internet import reactor
 
-class Server():
-    def __init__(self, args):
-        self.port1 = 9900
-        self.port2 = 9901
-        self.connections = {}
-
+class Map():
+    def __init__(self):
         # Generate map tiles so both clients generate the same map
-        self.map_height = self.map_width = 7
         self.map = []
+        self.map_height = self.map_width = 7
         for i in range(0, self.map_height):
             self.map.append([])
             for j in range(0, self.map_width):
                 self.map[i].append(randint(0,2))
-        self.occupied_pos = []
-        self.player1_pos = None
-        self.player1_type = None
+        self.player_pos = {}
+        self.player_types = {}
 
     def getValidStartPos(self):
         rowPos = randint(0, self.map_height-1)
@@ -30,69 +26,90 @@ class Server():
             tile = row[randint(0, self.map_width-1)]
         self.occupied_pos.append((rowPos, tile))
         return (rowPos, tile)
-        
-    def run(self):
-        factory = ClientConnFactory(self)
-        reactor.listenTCP(self.port1, factory)
-        reactor.listenTCP(self.port2, factory)
-        reactor.run()
 
-class ClientConnFactory(Factory):
-    def __init__(self, server):
-        self.server = server
-
-    def buildProtocol(self, addr):
-        newConn = ClientConnProtocol(self, len(self.server.connections))
-        self.server.connections[len(self.server.connections)] = newConn
-        return newConn
-
-class ClientConnProtocol(Protocol):
-    def __init__(self, factory, conn_id):
-        self.server = factory.server
-        self.conn_id = conn_id
+class Command(LineReceiver):
+    def __init__(self, factory):
+        self.players = factory.players
+        self.map = factory.map
+        self.name = None
+        self.type = None
+        self.state = 'GETNAME'
 
     def connectionMade(self):
-        print 'Client %d joined' % self.conn_id
-        # Give the client the tile list
+        # Give the client the map size and tile list
         map_str = ''
-        for i, row in enumerate(self.server.map):
+        for i, row in enumerate(self.map):
             for j, item in enumerate(row):
                 map_str += str(item)+','
         map_str = map_str[0:len(map_str)-1]
-        size_str = str(self.server.map_width) +','+ str(self.server.map_height)
-        self.transport.write('MAP,' + size_str +','+ map_str + '\r\n')
-        # Give the client a start position
-        pos = self.server.getValidStartPos()
-        self.transport.write('POS1,' + str(pos[0]) +','+ str(pos[1]) + '\r\n')
+        size_str = str(self.map_width) +','+ str(self.map_height)
+        self.sendLine('MAP,' + size_str +','+ map_str)
 
-        if len(self.server.connections) == 1:
-            self.server.player1_pos = pos
-        elif len(self.server.connections) == 2:
-            self.transport.write('POS2,' + str(self.server.player1_type) +','+ str(self.server.player1_pos[0]) +','+ str(self.server.player1_pos[1]) + '\r\n')
+        # Give the client a start position
+        pos = self.map.getValidStartPos()
+        self.transport.write('POS,' + str(pos[0]) +','+ str(pos[1]) + '\r\n')
+
+        self.sendLine('What\'s your name?')
 
     def connectionLost(self, reason):
-        print 'Client %d left' % self.conn_id
-        # Tell other client that this client left
-        if len(self.server.connections) > 1:
-            if self.conn_id == 0:
-                self.server.connections[1].transport.write('QUIT\r\n')
-            else:
-                self.server.connections[0].transport.write('QUIT\r\n')
-        if self.server.connections.has_key(self.conn_id):
-            del self.server.connections[self.conn_id]
+        for name, protocol in self.players.iteritems():
+            if protocol != self:
+                protocol.sendLine('QUIT,' + name)
+        if self.players.has_key(self.name):
+            del self.players[self.name]
 
-    def dataReceived(self, data):
-        # Get player 1's type and save it
-        data = data.rstrip()
-        tokens = data.split(',')
-        if tokens[0] == 'TYPE':
-            self.server.player1_type = tokens[1]
-        # Get data from client and send it to other client
+    def lineReceived(self, line):
+        if self.state == 'GETNAME':
+            self.handle_GETNAME(line)
+        elif self.state == 'GETTANKTYPE':
+            self.handle_GETTANKTYPE(line)
+        elif self.state == 'WAITFOROPPONENT':
+            self.handle_WAITFOROPPONENT()
+        elif self.state == 'FIGHT':
+            self.handle_FIGHT(line)
+
+    def handle_GETNAME(self, name):
+        if self.players.has_key(name):
+            self.sendLine('Name taken, please choose another:')
+            return
+        self.name = name
+        self.players[name] = self
+        self.state = 'GETTANKTYPE'
+        self.sendLine('Please choose your tank:\nGreen, blue, red')
+
+    def handleGETTANKTYPE(self, tank):
+        if tank == 'green':
+            self.type = 'green'
+        elif tank == 'blue':
+            self.type = 'blue'
+        elif tank == 'red':
+            self.type = 'red'
         else:
-            for conn_id, connection in self.server.connections.iteritems():
-                if connection != self:
-                    connection.transport.write(data)
+            self.sendLine('Unknown type, please choose another:')
+            return
+        self.state = 'WAITFOROPPONENT'
+
+    def handle_WAITFOROPPONENT(self):
+        while len(self.players) < 2:
+            pass
+        for name, protocol in self.players.iteritems():
+            if protocol != self:
+                protocol.sendLine('TYPE,' + name +','+ protocol.type)
+
+    def handle_FIGHT(self, line):
+        for name, protocol in self.players.iteritems():
+            if protocol != self:
+                protocol.sendLine(line)
+
+class CommandFactory(Factory):
+    def __init__(self, MAP):
+        self.players = {}
+        self.map = MAP
+
+    def buildProtocol(self, addr):
+        return Command(self)
 
 if __name__ == '__main__':
-    server = Server(sys.argv)
-    server.run()
+    MAP = Map()
+    reactor.listenTCP(9900, CommandFactory(MAP))
+    reactor.run()

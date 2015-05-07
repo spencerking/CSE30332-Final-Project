@@ -10,7 +10,7 @@ class Client():
         self.serverAddress = args[1]
         self.serverPort = int(args[2])
         self.factory = ClientConnFactory(self)
-        self.gs = GameSpace(self, args[3])
+        self.gs = GameSpace(self)
         reactor.connectTCP(self.serverAddress, self.serverPort, self.factory)
 
     def run(self):
@@ -59,7 +59,7 @@ class ClientConnProtocol(LineReceiver):
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        print 'Usage: $ python client.py <address> <port> <tank type>'
+        print 'Usage: $ python client.py <address> <port>'
         print 'Tank types are "blue", "green", and "red"'
         sys.exit()
     client = Client(sys.argv)
