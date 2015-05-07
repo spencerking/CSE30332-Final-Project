@@ -11,7 +11,7 @@ class Tank(pygame.sprite.Sprite):
 		self.tank_type = tanktype
 		self.fire_sound = pygame.mixer.Sound('audio/tank_fire.wav')
 		self.move_sound = pygame.mixer.Sound('audio/tank_move.wav')
-		self.curr_tile = pos
+		self.curr_tile = (int(pos[0]), int(pos[1]))
 		self.tile_bonus = 0 # Bonus damage based on the current tile
 
 		# Direction is initially NW, 1 is N, 2 NE, etc.
@@ -41,7 +41,7 @@ class Tank(pygame.sprite.Sprite):
 		self.turret_image = pygame.image.load('tank/'+self.tank_type+'/turret%d.png' % self.direction)
 		self.rect = self.tank_image.get_rect()
 
-		displayed_pos = World.iso_from_cartesian(int(pos[0])*80-8, int(pos[1])*80-8)
+		displayed_pos = World.iso_from_cartesian(self.curr_tile[0]*80-8, self.curr_tile[1]*80-8)
 		self.rect = self.rect.move(displayed_pos)
 
 	def tick(self):

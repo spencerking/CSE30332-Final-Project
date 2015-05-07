@@ -6,7 +6,7 @@ from twisted.internet import reactor
 
 class Map():
     def __init__(self):
-        # Generate map tiles so both clients generate the same map
+        # Generate map tiles so both clients present the same map
         self.map = []
         self.map_height = self.map_width = 7
         for i in range(0, self.map_height):
@@ -30,25 +30,27 @@ class Map():
             tile = row[randint(0, self.map_width-1)]    
 
 class Command(LineReceiver):
-    def __init__(self, factory):
+    def __init__(self, factory, num):
         self.players = factory.players
-        self.map = factory.map
+        self.id = num
+        self.MAP = factory.map
         self.name = None
         self.type = None
         self.state = 'GETNAME'
 
     def connectionMade(self):
+        print 'Client %d connected' % self.id
         # Give the client the map size and tile list
         map_str = ''
-        for i, row in enumerate(self.map):
+        for i, row in enumerate(self.MAP.map):
             for j, item in enumerate(row):
                 map_str += str(item)+','
         map_str = map_str[0:len(map_str)-1]
-        size_str = str(self.map_width) +','+ str(self.map_height)
+        size_str = str(self.MAP.map_width) +','+ str(self.MAP.map_height)
         self.sendLine('MAP,' + size_str +','+ map_str)
 
         # Give the client a start position
-        pos = self.map.getValidStartPos(self.name)
+        pos = self.MAP.getValidStartPos(self.name)
         self.sendLine('POS1,' + str(pos[0]) +','+ str(pos[1]))
 
         self.sendLine('What\'s your name?')
@@ -93,13 +95,13 @@ class Command(LineReceiver):
         self.state = 'WAITFOROPPONENT'
 
     def handle_WAITFOROPPONENT(self):
-        # Block the server from processing any lines until other player is connected
-        while len(self.players) < 2:
-            pass
         for name, protocol in self.players.iteritems():
             if protocol != self:
-                # Send our name and tank type to other player(s)
-                protocol.sendLine('POS2,' + self.name +','+ self.type +','+ str(self.map.player_positions[self.name][0]) +','+ str(self.map.player_positions[self.name][1]))
+                if protocol.state == 'WAITFOROPPONENT':
+                    # Send our name and tank type to other player(s)
+                    protocol.sendLine('POS2,' + self.name +','+ self.type +','+ str(self.map.player_positions[self.name][0]) +','+ str(self.map.player_positions[self.name][1]))
+                else:
+                    return
         self.state = 'FIGHT'
 
     def handle_FIGHT(self, line):
@@ -113,7 +115,7 @@ class CommandFactory(Factory):
         self.map = MAP
 
     def buildProtocol(self, addr):
-        return Command(self)
+        return Command(self, len(self.players))
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
