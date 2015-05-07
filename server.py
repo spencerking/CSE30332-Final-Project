@@ -42,7 +42,7 @@ class ClientConnFactory(Factory):
         self.server = server
 
     def buildProtocol(self, addr):
-        newConn = ClientConnProtocol(self, len(self.server.connections)+1)
+        newConn = ClientConnProtocol(self, len(self.server.connections))
         self.server.connections.append(newConn)
         return newConn
 
@@ -52,7 +52,7 @@ class ClientConnProtocol(Protocol):
         self.conn_id = conn_id
 
     def connectionMade(self):
-        print 'Client %d joined' % self.conn_id
+        print 'Client %d joined' % self.conn_id+1
         # Give the client the tile list
         map_str = ''
         for i, row in enumerate(self.server.map):
