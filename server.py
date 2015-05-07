@@ -7,7 +7,7 @@ class Server():
     def __init__(self, args):
         self.port1 = 9900
         self.port2 = 9901
-        self.connections = []
+        self.connections = {}
 
         # Generate map tiles so both clients generate the same map
         self.map_height = self.map_width = 7
@@ -43,7 +43,7 @@ class ClientConnFactory(Factory):
 
     def buildProtocol(self, addr):
         newConn = ClientConnProtocol(self, len(self.server.connections))
-        self.server.connections.append(newConn)
+        self.server.connections[len(self.server.connections)] = newConn
         return newConn
 
 class ClientConnProtocol(Protocol):
@@ -52,7 +52,7 @@ class ClientConnProtocol(Protocol):
         self.conn_id = conn_id
 
     def connectionMade(self):
-        print 'Client %d joined' % self.conn_id+1
+        print 'Client %d joined' % self.conn_id
         # Give the client the tile list
         map_str = ''
         for i, row in enumerate(self.server.map):
@@ -74,8 +74,11 @@ class ClientConnProtocol(Protocol):
         print 'Client %d left' % self.conn_id
         # Tell other client that this client left
         if len(self.server.connections) > 1:
-            self.server.connections[self.conn_id-1].transport.write('QUIT')
-        self.server.connections.remove(self)
+            if self.conn_id == 0:
+                self.server.connections[1].transport.write('QUIT\r\n')
+            else:
+                self.server.connections[0].transport.write('QUIT\r\n')
+        del self.server.connections[self.conn_id]
 
     def dataReceived(self, data):
         # Get player 1's type and save it
@@ -85,7 +88,10 @@ class ClientConnProtocol(Protocol):
             self.server.player1_type = tokens[1]
         # Get data from client and send it to other client
         else:
-            self.server.connections[self.conn_id-1].transport.write(data)
+            if self.conn_id == 0:
+                self.server.connections[1].transport.write(data)
+            else:
+                self.server.connections[0].transport.write(data)
     
 if __name__ == '__main__':
     server = Server(sys.argv)
