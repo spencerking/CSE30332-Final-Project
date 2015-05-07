@@ -78,13 +78,15 @@ class ClientConnProtocol(Protocol):
         self.server.connections.remove(self)
 
     def dataReceived(self, data):
+        # Get player 1's type and save it
         data = data.rstrip()
         tokens = data.split(',')
         if tokens[0] == 'TYPE':
             if len(self.server.connections) == 1:
                 self.server.player1_type = tokens[1]
         # Get data from client and send it to other client
-        self.server.connections[self.conn_id-1].transport.write(data)
+        else:
+            self.server.connections[self.conn_id-1].transport.write(data)
     
 if __name__ == '__main__':
     server = Server(sys.argv)

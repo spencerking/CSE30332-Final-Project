@@ -31,7 +31,7 @@ class GameSpace:
     def initPlayer(self, position):
         self.player = Player(self.playerType, position, self)
         self.sprites.append(self.player)
-        self.client.transport.write('TYPE,' + self.playerType)
+        self.client.connection.transport.write('TYPE,' + self.playerType)
 
     def initEnemy(self, enemyType, position):
         self.enemy = Enemy(enemyType, position, self)
@@ -54,7 +54,7 @@ class GameSpace:
                     self.player.key_handler(event.key)
 
                     # Send key event to other player
-                    self.client.transport.write('MOV,' + event.key + '\r\n')
+                    self.client.connection.transport.write('MOV,' + event.key + '\r\n')
 
                 if event.type == MOUSEBUTTONDOWN:
                     self.fire(self.player)
@@ -63,7 +63,7 @@ class GameSpace:
                     self.player.fire_sound.play()
 
                     # Send mouse event to other player
-                    self.client.transport.write('FIR,' + self.player.turret_direction + '\r\n')
+                    self.client.connection.transport.write('FIR,' + self.player.turret_direction + '\r\n')
 
             self.screen.fill(self.black)
 
