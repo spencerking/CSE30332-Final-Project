@@ -1,5 +1,6 @@
 import sys
-from twisted.internet.protocol import ClientFactory, Protocol
+from twisted.internet.protocol import ClientFactory
+from twisted.protocols.basic import LineReceiver
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 from game import GameSpace
@@ -22,20 +23,24 @@ class ClientConnFactory(ClientFactory):
         self.client = client
 
     def buildProtocol(self, addr):
-        newConn = ClientConnProtocol()
+        newConn = ClientConnProtocol(self)
         self.client.connection = newConn
         return newConn
 
-class ClientConnProtocol(Protocol):
+class ClientConnProtocol(LineReceiver):
+    def __init__(self, factory):
+        self.gs = factory.client.gs
+
     def connectionMade(self):
         print 'Connected to server'
 
-    def dataReceived(self, data):
-        data = data.rstrip()
-        tokens = data.split(',')
+    def lineReceived(self, line):
+        print line
+        line = line.rstrip()
+        tokens = line.split(',')
         if tokens[0] == 'MAP':
-            #                 [world size] [tile type, ...]
-            self.gs.initWorld(tokens[1:2], tokens[3:])
+            #                 [world size] [tiles]
+            self.gs.initWorld(tokens[1:3], tokens[3:])
         elif tokens[0] == 'POS1':
             self.gs.initPlayer(tokens[1:]) # [x, y]
         elif tokens[0] == 'POS2':

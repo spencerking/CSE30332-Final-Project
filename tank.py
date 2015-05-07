@@ -41,7 +41,7 @@ class Tank(pygame.sprite.Sprite):
 		self.turret_image = pygame.image.load('tank/'+self.tank_type+'/turret%d.png' % self.direction)
 		self.rect = self.tank_image.get_rect()
 
-		displayed_pos = World.iso_from_cartesian(pos[0]*80-8, pos[1]*80-8)
+		displayed_pos = World.iso_from_cartesian(int(pos[0])*80-8, int(pos[1])*80-8)
 		self.rect = self.rect.move(displayed_pos)
 
 	def tick(self):

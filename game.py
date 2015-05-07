@@ -12,6 +12,7 @@ from enemy import Enemy
 class GameSpace:
     def __init__(self, client, tankType):
         self.client = client
+        self.playerType = tankType
 
         pygame.init()
         pygame.mixer.init()
@@ -28,11 +29,11 @@ class GameSpace:
         self.sprites.append(self.world)
 
     def initPlayer(self, position):
-        self.player = Player()
+        self.player = Player(self.playerType, position, self)
         self.sprites.append(self.player)
 
-    def initEnemy(self, tankType, position):
-        self.enemy = Enemy(tankType, position, self)
+    def initEnemy(self, enemyType, position):
+        self.enemy = Enemy(enemyType, position, self)
         self.sprites.append(self.world)
 
     def fire(self, firing_tank):
@@ -52,7 +53,7 @@ class GameSpace:
                     self.player.key_handler(event.key)
 
                     # Send key event to other player
-                    self.client.transport.write('MOV,' + event.key)
+                    self.client.transport.write('MOV,' + event.key + '\r\n')
 
                 if event.type == MOUSEBUTTONDOWN:
                     self.fire(self.player)
@@ -61,7 +62,7 @@ class GameSpace:
                     self.player.fire_sound.play()
 
                     # Send mouse event to other player
-                    self.client.transport.write('FIR,' + self.player.turret_direction)
+                    self.client.transport.write('FIR,' + self.player.turret_direction + '\r\n')
 
             self.screen.fill(self.black)
 

@@ -8,8 +8,8 @@ from random import randint
 class World:
     def __init__(self, size, tiles, gs):
         self.gs = gs
-        self.height = size[0]
-        self.width = size[1]
+        self.height = int(size[0])
+        self.width = int(size[1])
         self.tile_height = 163
         self.tile_width = 123
         self.map = []
@@ -19,7 +19,7 @@ class World:
             self.map.append([])
             for j in range(0, self.width):
                 imageid = tiles[i*self.height + j]
-                pos = iso_from_cartesian(80*(i), 80*(j))
+                pos = World.iso_from_cartesian(80*(i), 80*(j))
                 self.map[i].append(Tile(imageid, pos))
 
     def tick(self):
