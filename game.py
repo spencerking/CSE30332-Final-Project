@@ -70,7 +70,6 @@ class GameSpace:
             self.screen.fill(self.black)
 
             # Collision detection
-            # TODO: MAKE SURE TO SEND DAMAGE
             for s in self.sprites:
                 s.tick()
                 if isinstance(s, Bullet):

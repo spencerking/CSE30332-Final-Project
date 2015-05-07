@@ -84,7 +84,7 @@ class ClientConnProtocol(Protocol):
         # Get player 1's type and save it
         data = data.rstrip()
         tokens = data.split(',')
-        if tokens[0] == 'TYPE' and len(self.server.connections) == 1:
+        if tokens[0] == 'TYPE':
             self.server.player1_type = tokens[1]
         # Get data from client and send it to other client
         else:

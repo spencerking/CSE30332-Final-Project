@@ -14,8 +14,8 @@ class Client():
         reactor.connectTCP(self.serverAddress, self.serverPort, self.factory)
 
     def run(self):
-        gameLoop = LoopingCall(self.gs.main)
-        gameLoop.start(1.0/60)
+        #gameLoop = LoopingCall(self.gs.main)
+        #gameLoop.start(1.0/60)
         reactor.run()
 
 class ClientConnFactory(ClientFactory):
@@ -32,7 +32,7 @@ class ClientConnProtocol(LineReceiver):
         self.gs = factory.client.gs
 
     def connectionMade(self):
-        print 'Connected to server'
+        print 'Connected to server.'
 
     def lineReceived(self, line):
         print line
@@ -46,6 +46,7 @@ class ClientConnProtocol(LineReceiver):
         elif tokens[0] == 'POS2' and self.gs.enemy is None:
             #                 tankType,  ( position )
             self.gs.initEnemy(tokens[1], ( int(tokens[2]), int(tokens[3]) ))
+            self.transport.write('Test\r\n')
             self.sendLine('POS2,' + str(self.gs.player.tank_type) +','+ str(self.gs.player.curr_tile[0]) +','+ str(self.gs.player.curr_tile[1]))
         elif tokens[0] == 'MOVE':
             self.gs.enemy.key_handler(int(tokens[1])) # keycode
@@ -54,7 +55,7 @@ class ClientConnProtocol(LineReceiver):
         elif tokens[0] == 'TURR':
             self.gs.enemy.turret_direction = int(tokens[1]) # turret direction
         elif tokens[0] == 'QUIT':
-            print 'The other player left'
+            print 'The other player left.'
             # TODO: cleanly exit
 
 if __name__ == '__main__':
