@@ -56,7 +56,6 @@ class ClientConnProtocol(LineReceiver):
             self.gs.enemy.turret_direction = int(tokens[1]) # turret direction
         elif tokens[0] == 'QUIT':
             print 'The other player left.'
-            # TODO: cleanly exit
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:

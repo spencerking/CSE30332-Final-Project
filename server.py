@@ -78,7 +78,8 @@ class ClientConnProtocol(Protocol):
                 self.server.connections[1].transport.write('QUIT\r\n')
             else:
                 self.server.connections[0].transport.write('QUIT\r\n')
-        del self.server.connections[self.conn_id]
+        if self.server.connections.has_key(self.conn_id):
+            del self.server.connections[self.conn_id]
 
     def dataReceived(self, data):
         # Get player 1's type and save it
@@ -88,11 +89,10 @@ class ClientConnProtocol(Protocol):
             self.server.player1_type = tokens[1]
         # Get data from client and send it to other client
         else:
-            if self.conn_id == 0:
-                self.server.connections[1].transport.write(data)
-            else:
-                self.server.connections[0].transport.write(data)
-    
+            for conn_id, connection in self.server.connections.iteritems():
+                if connection != self:
+                    connection.transport.write(data)
+
 if __name__ == '__main__':
     server = Server(sys.argv)
     server.run()
