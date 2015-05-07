@@ -23,6 +23,8 @@ class GameSpace:
         self.screen = pygame.display.set_mode(self.size)
         self.clock = pygame.time.Clock()
         self.sprites = []
+        self.player = None
+        self.enemy = None
 
     def initWorld(self, size, tiles):
         self.world = World(size, tiles, self)

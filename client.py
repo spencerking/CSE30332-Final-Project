@@ -43,10 +43,10 @@ class ClientConnProtocol(LineReceiver):
             self.gs.initWorld(tokens[1:3], tokens[3:])
         elif tokens[0] == 'POS1':
             self.gs.initPlayer(tokens[1:]) # [x, y]
-        elif tokens[0] == 'POS2':
+        elif tokens[0] == 'POS2' and self.gs.enemy is None:
             #                 tankType,  ( position )
             self.gs.initEnemy(tokens[1], ( int(tokens[2]), int(tokens[3]) ))
-            self.transport.write('POS2,' +','+ str(self.gs.player.tank_type) +','+ str(self.gs.player.curr_tile[0]) +','+ str(self.gs.player.curr_tile[1]) + '\r\n')
+            self.sendLine('POS2,' + str(self.gs.player.tank_type) +','+ str(self.gs.player.curr_tile[0]) +','+ str(self.gs.player.curr_tile[1]))
         elif tokens[0] == 'MOVE':
             self.gs.enemy.key_handler(int(tokens[1])) # keycode
         elif tokens[0] == 'FIRE':

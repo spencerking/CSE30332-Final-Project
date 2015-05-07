@@ -68,7 +68,7 @@ class ClientConnProtocol(Protocol):
         if len(self.server.connections) == 1:
             self.server.player1_pos = pos
         elif len(self.server.connections) == 2:
-            self.transport.write('POS2,' +','+  str(self.server.player1_type) +','+ str(self.server.player1_pos[0]) +','+ str(self.server.player1_pos[1]) + '\r\n')
+            self.transport.write('POS2,' + str(self.server.player1_type) +','+ str(self.server.player1_pos[0]) +','+ str(self.server.player1_pos[1]) + '\r\n')
 
     def connectionLost(self, reason):
         print 'Client %d left' % self.conn_id
@@ -81,9 +81,8 @@ class ClientConnProtocol(Protocol):
         # Get player 1's type and save it
         data = data.rstrip()
         tokens = data.split(',')
-        if tokens[0] == 'TYPE':
-            if len(self.server.connections) == 1:
-                self.server.player1_type = tokens[1]
+        if tokens[0] == 'TYPE' and len(self.server.connections) == 1:
+            self.server.player1_type = tokens[1]
         # Get data from client and send it to other client
         else:
             self.server.connections[self.conn_id-1].transport.write(data)
