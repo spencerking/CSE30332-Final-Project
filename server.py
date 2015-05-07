@@ -86,6 +86,7 @@ class Command(LineReceiver):
     def handleGETTANKTYPE(self, tank):
         if tank in ['green', 'blue', 'red']:
             self.type = tank
+            self.sendLine('TYPE,' + tank)
         else:
             self.sendLine('Unknown type, please choose another:')
             return
@@ -119,5 +120,5 @@ if __name__ == '__main__':
         print 'Usage: $ python server.py <port>'
         sys.exit()
     MAP = Map()
-    reactor.listenTCP(sys.argv[1], CommandFactory(MAP))
+    reactor.listenTCP(int(sys.argv[1]), CommandFactory(MAP))
     reactor.run()

@@ -1,7 +1,6 @@
 import sys
 from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import ClientFactory
-from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 from game import GameSpace
@@ -21,10 +20,11 @@ class Command(LineReceiver):
             #                 [world size] [tiles]
             self.gs.initWorld(tokens[1:3], tokens[3:])
         elif tokens[0] == 'POS1':
-            self.gs.initPlayer(tokens[1:]) # [x, y]
-        elif tokens[0] == 'POS2' and self.gs.enemy is None:
+            #                  tankType,  ( position )
+            self.gs.initPlayer(tokens[1], tokens[2:])
+        elif tokens[0] == 'POS2':
             #                 tankType,  ( position )
-            self.gs.initEnemy(tokens[1], ( int(tokens[2]), int(tokens[3]) ))
+            self.gs.initEnemy(tokens[1], tokens[2:])
         elif tokens[0] == 'MOVE':
             self.gs.enemy.key_handler(int(tokens[1])) # keycode
         elif tokens[0] == 'FIRE':
@@ -39,9 +39,11 @@ class Command(LineReceiver):
 class CommandFactory(ClientFactory):
     def __init__(self, gs):
         self.gs = gs
+        self.connection = None
 
     def buildProtocol(self, addr):
-        return Command(self.gs)
+        self.connection = Command(self.gs)
+        return self.connection
 
     def clientConnectionLost(self, connector, reason):
         print 'Lost connection.'
@@ -51,7 +53,7 @@ if __name__ == '__main__':
         print 'Usage: $ python client.py <address> <port>'
         sys.exit()
     gs = GameSpace()
-    endpoint = TCP4ClientEndpoint(reactor, sys.argv[1], sys.argv[2])
-    d = point.connect(CommandFactory(gs))
-    d.addCallback(gotProtocol)
+    factory = CommandFactory(gs)
+    reactor.connectTCP(sys.argv[1], int(sys.argv[2]), factory)
+    gs.connection = factory.connection
     reactor.run()

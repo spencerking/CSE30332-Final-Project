@@ -10,9 +10,8 @@ from player import Player
 from enemy import Enemy
 
 class GameSpace:
-    def __init__(self, client, tankType):
-        self.client = client
-        self.playerType = tankType
+    def __init__(self):
+        self.connection = None
 
         pygame.init()
         pygame.mixer.init()
@@ -30,18 +29,18 @@ class GameSpace:
         self.world = World(size, tiles, self)
         self.sprites.append(self.world)
 
-    def initPlayer(self, position):
-        self.player = Player(self.playerType, position, self)
+    def initPlayer(self, player_type, position):
+        self.player = Player(player_type, position, self)
         self.sprites.append(self.player)
-        self.client.connection.transport.write('TYPE,' + self.playerType + '\r\n')
 
-    def initEnemy(self, enemyType, position):
-        self.enemy = Enemy(enemyType, position, self)
+    def initEnemy(self, enemy_type, position):
+        self.enemy = Enemy(enemy_type, position, self)
         self.sprites.append(self.world)
 
     def fire(self, firing_tank):
         bullet = Bullet(firing_tank, self)
         self.sprites.append(bullet)
+        self.firing_tank.fire_sound.play()
 
     def main(self):
         # Run
@@ -56,16 +55,13 @@ class GameSpace:
                     self.player.key_handler(event.key)
 
                     # Send key event to other player
-                    self.client.connection.transport.write('MOV,' + event.key + '\r\n')
+                    self.connection.sendLine('MOVE,' + event.key)
 
                 if event.type == MOUSEBUTTONDOWN:
                     self.fire(self.player)
 
-                    self.sprites.append(bullet)
-                    self.player.fire_sound.play()
-
                     # Send mouse event to other player
-                    self.client.connection.transport.write('FIR,' + self.player.turret_direction + '\r\n')
+                    self.connection.sendLine('FIRE,' + self.player.turret_direction)
 
             self.screen.fill(self.black)
 
