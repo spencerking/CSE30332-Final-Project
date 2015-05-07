@@ -18,7 +18,7 @@ class Server():
                 self.map[i].append(randint(0,2))
         self.occupied_pos = []
         self.player1_pos = None
-        self.player2_pos = None
+        self.player1_type = None
 
     def getValidStartPos(self):
         rowPos = randint(0, self.map_height-1)
@@ -68,8 +68,7 @@ class ClientConnProtocol(Protocol):
         if len(self.server.connections) == 1:
             self.server.player1_pos = pos
         elif len(self.server.connections) == 2:
-            self.server.player2_pos = pos
-            self.transport.write('POS2,' + str(self.server.player1_pos[0]) +','+ str(self.server.player1_pos[1]) + '\r\n')
+            self.transport.write('POS2,' +','+  str(self.server.player1_type) +','+ str(self.server.player1_pos[0]) +','+ str(self.server.player1_pos[1]) + '\r\n')
 
     def connectionLost(self, reason):
         print 'Client %d left' % self.conn_id
@@ -79,6 +78,11 @@ class ClientConnProtocol(Protocol):
         self.server.connections.remove(self)
 
     def dataReceived(self, data):
+        data = data.rstrip()
+        tokens = data.split(',')
+        if tokens[0] == 'TYPE':
+            if len(self.server.connections) == 1:
+                self.server.player1_type = tokens[1]
         # Get data from client and send it to other client
         self.server.connections[self.conn_id-1].transport.write(data)
     

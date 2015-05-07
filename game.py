@@ -31,6 +31,7 @@ class GameSpace:
     def initPlayer(self, position):
         self.player = Player(self.playerType, position, self)
         self.sprites.append(self.player)
+        self.client.transport.write('TYPE,' + self.playerType)
 
     def initEnemy(self, enemyType, position):
         self.enemy = Enemy(enemyType, position, self)
